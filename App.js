@@ -1,10 +1,11 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import TicTacToe from './src/screens/TicTacToe';
+
 
 export default function App() {
     return (
-        <View>
-            <Text>Hello World</Text>
-        </View>
+        <>
+            <TicTacToe />
+        </>
     )
 }
