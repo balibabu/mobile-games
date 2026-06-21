@@ -5,90 +5,92 @@ import {
     TouchableOpacity,
     StyleSheet,
     Dimensions,
+    StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Header from '../components/Header';
 
 const { width } = Dimensions.get('window');
 const CELL_SIZE = Math.min(width / 4, 120); // Responsive cell size
+
+const winningLines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+    [0, 4, 8], [2, 4, 6],           // diagonals
+];
+
+const checkWinner = (currentBoard) => {
+    for (const line of winningLines) {
+        const [a, b, c] = line;
+        if (
+            currentBoard[a] &&
+            currentBoard[a] === currentBoard[b] &&
+            currentBoard[a] === currentBoard[c]
+        ) {
+            return currentBoard[a];
+        }
+    }
+    return null;
+};
+
+const isBoardFull = (currentBoard) => currentBoard.every((cell) => cell !== null);
+
+// Minimax with depth for optimal (unbeatable) bot
+const minimax = (currentBoard, depth, isMaximizing) => {
+    const result = checkWinner(currentBoard);
+
+    if (result === 'O') return 10 - depth;     // Bot win
+    if (result === 'X') return -10 + depth;    // Human win (delay loss)
+    if (isBoardFull(currentBoard)) return 0;  // Draw
+
+    if (isMaximizing) { // Bot (O) maximizing
+        let bestScore = -Infinity;
+        for (let i = 0; i < 9; i++) {
+            if (currentBoard[i] === null) {
+                currentBoard[i] = 'O';
+                const score = minimax(currentBoard, depth + 1, false);
+                currentBoard[i] = null;
+                bestScore = Math.max(bestScore, score);
+            }
+        }
+        return bestScore;
+    } else { // Human (X) minimizing
+        let bestScore = Infinity;
+        for (let i = 0; i < 9; i++) {
+            if (currentBoard[i] === null) {
+                currentBoard[i] = 'X';
+                const score = minimax(currentBoard, depth + 1, true);
+                currentBoard[i] = null;
+                bestScore = Math.min(bestScore, score);
+            }
+        }
+        return bestScore;
+    }
+};
+
+const getBestMove = (currentBoard) => {
+    let bestScore = -Infinity;
+    let bestMove = -1;
+
+    for (let i = 0; i < 9; i++) {
+        if (currentBoard[i] === null) {
+            currentBoard[i] = 'O';
+            const score = minimax(currentBoard, 0, false);
+            currentBoard[i] = null;
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = i;
+            }
+        }
+    }
+    return bestMove;
+};
 
 const TikTacToe = () => {
     const [board, setBoard] = useState(Array(9).fill(null));
     const [isXTurn, setIsXTurn] = useState(true); // true = Human (X), false = Bot (O)
     const [winner, setWinner] = useState(null);
-
-    const winningLines = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-        [0, 4, 8], [2, 4, 6],           // diagonals
-    ];
-
-    const checkWinner = (currentBoard) => {
-        for (const line of winningLines) {
-            const [a, b, c] = line;
-            if (
-                currentBoard[a] &&
-                currentBoard[a] === currentBoard[b] &&
-                currentBoard[a] === currentBoard[c]
-            ) {
-                return currentBoard[a];
-            }
-        }
-        return null;
-    };
-
-    const isBoardFull = (currentBoard) => currentBoard.every((cell) => cell !== null);
-
-    // Minimax with depth for optimal (unbeatable) bot
-    const minimax = (currentBoard, depth, isMaximizing) => {
-        const result = checkWinner(currentBoard);
-
-        if (result === 'O') return 10 - depth;     // Bot win
-        if (result === 'X') return -10 + depth;    // Human win (delay loss)
-        if (isBoardFull(currentBoard)) return 0;  // Draw
-
-        if (isMaximizing) { // Bot (O) maximizing
-            let bestScore = -Infinity;
-            for (let i = 0; i < 9; i++) {
-                if (currentBoard[i] === null) {
-                    currentBoard[i] = 'O';
-                    const score = minimax(currentBoard, depth + 1, false);
-                    currentBoard[i] = null;
-                    bestScore = Math.max(bestScore, score);
-                }
-            }
-            return bestScore;
-        } else { // Human (X) minimizing
-            let bestScore = Infinity;
-            for (let i = 0; i < 9; i++) {
-                if (currentBoard[i] === null) {
-                    currentBoard[i] = 'X';
-                    const score = minimax(currentBoard, depth + 1, true);
-                    currentBoard[i] = null;
-                    bestScore = Math.min(bestScore, score);
-                }
-            }
-            return bestScore;
-        }
-    };
-
-    const getBestMove = (currentBoard) => {
-        let bestScore = -Infinity;
-        let bestMove = -1;
-
-        for (let i = 0; i < 9; i++) {
-            if (currentBoard[i] === null) {
-                currentBoard[i] = 'O';
-                const score = minimax(currentBoard, 0, false);
-                currentBoard[i] = null;
-
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMove = i;
-                }
-            }
-        }
-        return bestMove;
-    };
 
     const handleCellPress = (index) => {
         if (board[index] || winner || !isXTurn) return; // Can't play if occupied, game over, or bot's turn
@@ -150,43 +152,51 @@ const TikTacToe = () => {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Tic Tac Toe</Text>
-            <Text style={styles.subtitle}>Human (X) vs Bot (O)</Text>
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+            <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+            <Header title="Tic-Tac-Toe" />
+            <View style={styles.container}>
+                <Text style={styles.subtitle}>Human (X) vs Bot (O)</Text>
 
-            <Text style={styles.status}>{getStatusText()}</Text>
+                <Text style={styles.status}>{getStatusText()}</Text>
 
-            <View style={styles.board}>
-                <View style={styles.row}>
-                    {renderCell(0)}
-                    {renderCell(1)}
-                    {renderCell(2)}
+                <View style={styles.board}>
+                    <View style={styles.row}>
+                        {renderCell(0)}
+                        {renderCell(1)}
+                        {renderCell(2)}
+                    </View>
+                    <View style={styles.row}>
+                        {renderCell(3)}
+                        {renderCell(4)}
+                        {renderCell(5)}
+                    </View>
+                    <View style={styles.row}>
+                        {renderCell(6)}
+                        {renderCell(7)}
+                        {renderCell(8)}
+                    </View>
                 </View>
-                <View style={styles.row}>
-                    {renderCell(3)}
-                    {renderCell(4)}
-                    {renderCell(5)}
-                </View>
-                <View style={styles.row}>
-                    {renderCell(6)}
-                    {renderCell(7)}
-                    {renderCell(8)}
-                </View>
+
+                <TouchableOpacity style={styles.resetButton} onPress={resetGame}>
+                    <Text style={styles.resetText}>New Game</Text>
+                </TouchableOpacity>
             </View>
-
-            <TouchableOpacity style={styles.resetButton} onPress={resetGame}>
-                <Text style={styles.resetText}>New Game</Text>
-            </TouchableOpacity>
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+    },
     container: {
         flex: 1,
         backgroundColor: '#f0f0f0',
         alignItems: 'center',
         justifyContent: 'center',
+        width: '100%',
     },
     title: {
         fontSize: 36,
