@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, SafeAreaView } from 'react-native';
+import { View, StyleSheet, StatusBar } from 'react-native';
 import Header from '../../components/Header';
 import { BOARD_ROWS, BOARD_COLS, SHAPES, PIECES, useInterval } from './constants';
 import {
@@ -13,6 +13,7 @@ import {
 import StatsRow from './StatsRow';
 import GameBoard from './GameBoard';
 import Controls from './Controls';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Tetris = () => {
     const [grid, setGrid] = useState(() =>
