@@ -22,9 +22,10 @@ const { height: screenHeight } = Dimensions.get('window');
 // Responsive Board Sizing
 export const BOARD_ROWS = 20;
 export const BOARD_COLS = 10;
-export const BOARD_HEIGHT = screenHeight * 0.44; // Fits perfectly on all screens
-export const CELL_SIZE = Math.floor(BOARD_HEIGHT / BOARD_ROWS);
-export const BOARD_WIDTH = CELL_SIZE * BOARD_COLS;
+const RAW_BOARD_HEIGHT = screenHeight * 0.5;
+export const CELL_SIZE = Math.floor(RAW_BOARD_HEIGHT / BOARD_ROWS);
+export const BOARD_WIDTH = (CELL_SIZE * BOARD_COLS) + 8;
+export const BOARD_HEIGHT = (CELL_SIZE * BOARD_ROWS) + 8;
 
 export const SHAPES = {
     I: {
