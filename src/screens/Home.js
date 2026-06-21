@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, StatusBar, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
@@ -13,20 +13,20 @@ const Home = () => {
             title: 'Tic-Tac-Toe',
             description: 'Face off against an unbeatable Minimax AI bot. Can you get a draw or win?',
             emoji: '❌⭕️',
-            backgroundColor: '#FF3B30', // Vibrant Red
+            backgroundColor: '#ef4444', // Red glow
         },
         {
             id: 'Tetris',
             title: 'Tetris',
             description: 'Retro block-dropping arcade action. Rotate, drop, and clear lines!',
             emoji: '🧩',
-            backgroundColor: '#4CD964', // Vibrant Green
+            backgroundColor: '#10b981', // Green glow
         },
     ];
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f9f9f9" />
+            <StatusBar barStyle="light-content" backgroundColor="#09090b" />
             <View style={styles.header}>
                 <Text style={styles.welcomeText}>Welcome to</Text>
                 <Text style={styles.brandText}>MobGames Arcade 🕹️</Text>
@@ -58,7 +58,7 @@ const Home = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#09090b',
     },
     header: {
         paddingHorizontal: 24,
@@ -66,21 +66,22 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
     },
     welcomeText: {
-        fontSize: 16,
-        fontWeight: '500',
-        color: '#666',
+        fontSize: 14,
+        fontWeight: '800',
+        color: '#3b82f6',
         textTransform: 'uppercase',
-        letterSpacing: 1.2,
+        letterSpacing: 1.5,
     },
     brandText: {
         fontSize: 32,
-        fontWeight: 'bold',
-        color: '#1a1a1a',
+        fontWeight: '900',
+        color: '#f4f4f5',
         marginTop: 4,
+        letterSpacing: -0.5,
     },
     subtitleText: {
         fontSize: 14,
-        color: '#8e8e93',
+        color: '#71717a',
         marginTop: 8,
     },
     scrollContent: {
@@ -96,13 +97,13 @@ const styles = StyleSheet.create({
         padding: 16,
         alignItems: 'center',
         borderTopWidth: 1,
-        borderTopColor: '#eaeaea',
-        backgroundColor: '#ffffff',
+        borderTopColor: '#18181b',
+        backgroundColor: '#09090b',
     },
     footerText: {
         fontSize: 13,
-        color: '#8e8e93',
-        fontWeight: '500',
+        color: '#71717a',
+        fontWeight: '600',
     },
 });
 
