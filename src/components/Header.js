@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 
 const Header = ({ title, showBack = true }) => {
@@ -10,7 +11,8 @@ const Header = ({ title, showBack = true }) => {
             <View style={styles.buttonPlaceholder}>
                 {showBack && canGoBack && (
                     <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7}>
-                        <Text style={styles.backText}>← Back</Text>
+                        <ArrowLeft size={16} color="#a1a1aa" strokeWidth={2.5} />
+                        <Text style={styles.backText}> Back</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -44,6 +46,8 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     backButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
         paddingVertical: 6,
         paddingHorizontal: 10,
         borderRadius: 8,

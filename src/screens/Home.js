@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Gamepad2, Rocket, Grid3X3, LayoutGrid } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -12,15 +13,15 @@ const Home = () => {
             id: 'TicTacToe',
             title: 'Tic-Tac-Toe',
             description: 'Face off against an unbeatable Minimax AI bot. Can you get a draw or win?',
-            emoji: '❌⭕️',
-            backgroundColor: '#ef4444', // Red glow
+            Icon: Grid3X3,
+            backgroundColor: '#ef4444',
         },
         {
             id: 'Tetris',
             title: 'Tetris',
             description: 'Retro block-dropping arcade action. Rotate, drop, and clear lines!',
-            emoji: '🧩',
-            backgroundColor: '#10b981', // Green glow
+            Icon: LayoutGrid,
+            backgroundColor: '#10b981',
         },
     ];
 
@@ -28,10 +29,19 @@ const Home = () => {
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
             <StatusBar barStyle="light-content" backgroundColor="#09090b" />
             <View style={styles.header}>
-                <Text style={styles.welcomeText}>Welcome to</Text>
-                <Text style={styles.brandText}>MobGames Arcade 🕹️</Text>
+                <View style={styles.headerTop}>
+                    <View style={styles.logoCircle}>
+                        <Gamepad2 size={20} color="#f4f4f5" strokeWidth={2.5} />
+                    </View>
+                    <View style={styles.badge}>
+                        <Text style={styles.badgeText}>ARCADE</Text>
+                    </View>
+                </View>
+                <Text style={styles.brandText}>MobGames</Text>
                 <Text style={styles.subtitleText}>Choose a game below to start playing!</Text>
             </View>
+
+            <View style={styles.divider} />
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.gridContainer}>
@@ -40,7 +50,7 @@ const Home = () => {
                             key={game.id}
                             title={game.title}
                             description={game.description}
-                            emoji={game.emoji}
+                            Icon={game.Icon}
                             backgroundColor={game.backgroundColor}
                             onPress={() => navigate(game.id)}
                         />
@@ -49,7 +59,10 @@ const Home = () => {
             </ScrollView>
 
             <View style={styles.footer}>
-                <Text style={styles.footerText}>More games coming soon! 🚀</Text>
+                <View style={styles.footerContent}>
+                    <Rocket size={14} color="#52525b" strokeWidth={2} />
+                    <Text style={styles.footerText}> More games coming soon!</Text>
+                </View>
             </View>
         </SafeAreaView>
     );
@@ -62,30 +75,64 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingHorizontal: 24,
-        paddingTop: 20,
-        paddingBottom: 16,
+        paddingTop: 12,
+        paddingBottom: 20,
     },
-    welcomeText: {
-        fontSize: 14,
+    headerTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 14,
+    },
+    logoCircle: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#3b82f6',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#3b82f6',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 12,
+        elevation: 8,
+    },
+    badge: {
+        marginLeft: 10,
+        backgroundColor: '#18181b',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: '#27272a',
+    },
+    badgeText: {
+        fontSize: 11,
         fontWeight: '800',
-        color: '#3b82f6',
-        textTransform: 'uppercase',
-        letterSpacing: 1.5,
+        color: '#a1a1aa',
+        letterSpacing: 3,
     },
     brandText: {
-        fontSize: 32,
+        fontSize: 36,
         fontWeight: '900',
         color: '#f4f4f5',
         marginTop: 4,
-        letterSpacing: -0.5,
+        letterSpacing: -1,
     },
     subtitleText: {
         fontSize: 14,
-        color: '#71717a',
+        color: '#52525b',
         marginTop: 8,
+        letterSpacing: 0.2,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#18181b',
+        marginHorizontal: 24,
+        marginBottom: 8,
     },
     scrollContent: {
         paddingHorizontal: 12,
+        paddingTop: 8,
         paddingBottom: 30,
     },
     gridContainer: {
@@ -100,11 +147,13 @@ const styles = StyleSheet.create({
         borderTopColor: '#18181b',
         backgroundColor: '#09090b',
     },
+    footerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     footerText: {
         fontSize: 13,
-        color: '#71717a',
+        color: '#52525b',
         fontWeight: '600',
     },
 });
-
-export default Home;
