@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { RotateCw, ArrowLeft, ArrowDown, ArrowRight, ArrowBigDown } from 'lucide-react-native';
 
 const Controls = ({
     isPaused,
@@ -12,6 +13,8 @@ const Controls = ({
     moveRight,
     hardDrop,
 }) => {
+    const iconColor = '#a1a1aa';
+
     return (
         <View style={styles.controlsContainer}>
             {/* Game State Actions */}
@@ -46,7 +49,7 @@ const Controls = ({
                             onPress={rotate}
                             activeOpacity={0.7}
                         >
-                            <Text style={styles.dPadArrow}>🔄</Text>
+                            <RotateCw size={20} color={iconColor} strokeWidth={2.5} />
                         </TouchableOpacity>
                         <View style={styles.dPadSpacer} />
                     </View>
@@ -56,21 +59,21 @@ const Controls = ({
                             onPress={moveLeft}
                             activeOpacity={0.7}
                         >
-                            <Text style={styles.dPadArrow}>⬅️</Text>
+                            <ArrowLeft size={20} color={iconColor} strokeWidth={2.5} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.dPadButton}
                             onPress={moveDown}
                             activeOpacity={0.7}
                         >
-                            <Text style={styles.dPadArrow}>⬇️</Text>
+                            <ArrowDown size={20} color={iconColor} strokeWidth={2.5} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.dPadButton}
                             onPress={moveRight}
                             activeOpacity={0.7}
                         >
-                            <Text style={styles.dPadArrow}>➡️</Text>
+                            <ArrowRight size={20} color={iconColor} strokeWidth={2.5} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -82,7 +85,7 @@ const Controls = ({
                         onPress={hardDrop}
                         activeOpacity={0.7}
                     >
-                        <Text style={styles.actionButtonText}>⏬</Text>
+                        <ArrowBigDown size={24} color="#f4f4f5" strokeWidth={2.5} />
                         <Text style={styles.actionButtonLabel}>HARD DROP</Text>
                     </TouchableOpacity>
                 </View>

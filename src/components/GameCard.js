@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-nati
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width > 500 ? 220 : (width - 48) / 2;
 
-const GameCard = ({ title, description, emoji, onPress, backgroundColor = '#3b82f6' }) => {
+const GameCard = ({ title, description, Icon, onPress, backgroundColor = '#3b82f6' }) => {
     return (
         <TouchableOpacity
             style={styles.card}
@@ -16,7 +16,7 @@ const GameCard = ({ title, description, emoji, onPress, backgroundColor = '#3b82
                 <View style={styles.cardContent}>
                     <View style={[styles.emojiOrb, { backgroundColor: backgroundColor + '22' }]}>
                         <View style={[styles.emojiOrbInner, { backgroundColor: backgroundColor + '15' }]}>
-                            <Text style={styles.emoji}>{emoji}</Text>
+                            {Icon && <Icon size={22} color="#f4f4f5" strokeWidth={2} />}
                         </View>
                     </View>
                     <View style={styles.textContainer}>

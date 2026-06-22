@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Handshake, PartyPopper } from 'lucide-react-native';
 import Header from '../../components/Header';
 import Board from './Board';
 import { checkWinner, isBoardFull, getBestMove } from './minimax';
@@ -53,7 +54,22 @@ const TicTacToe = () => {
 
     const getStatusText = () => {
         if (winner) {
-            return winner === 'Draw' ? "It's a Draw! 🤝" : `${winner} Wins! 🎉`;
+            if (winner === 'Draw') {
+                return (
+                    <View style={styles.statusRow}>
+                        <Text style={styles.status}>It's a Draw! </Text>
+                        <Handshake size={22} color="#a1a1aa" strokeWidth={2} />
+                    </View>
+                );
+            }
+            return (
+                <View style={styles.statusRow}>
+                    <Text style={[styles.status, winner === 'X' ? styles.statusX : styles.statusO]}>
+                        {winner} Wins!{' '}
+                    </Text>
+                    <PartyPopper size={22} color={winner === 'X' ? '#ef4444' : '#3b82f6'} strokeWidth={2} />
+                </View>
+            );
         }
         return isXTurn ? "Your Turn (X)" : "Bot Thinking (O)...";
     };
@@ -66,12 +82,7 @@ const TicTacToe = () => {
                 <Text style={styles.subtitle}>HUMAN (X) VS BOT (O)</Text>
 
                 <View style={styles.statusContainer}>
-                    <Text style={[
-                        styles.status,
-                        winner === 'X' ? styles.statusX : winner === 'O' ? styles.statusO : null
-                    ]}>
-                        {getStatusText()}
-                    </Text>
+                    {getStatusText()}
                 </View>
 
                 <Board board={board} onCellPress={handleCellPress} />
@@ -108,6 +119,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 24,
+    },
+    statusRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     status: {
         fontSize: 22,
