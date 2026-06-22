@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = width > 500 ? 220 : (width - 48) / 2;
+const CARD_WIDTH = width > 500 ? 220 : (width - 56) / 2;
 
 const GameCard = ({ title, description, Icon, onPress, backgroundColor = '#3b82f6' }) => {
     return (

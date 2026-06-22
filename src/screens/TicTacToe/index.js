@@ -82,7 +82,7 @@ const TicTacToe = () => {
                 <Text style={styles.subtitle}>HUMAN (X) VS BOT (O)</Text>
 
                 <View style={styles.statusContainer}>
-                    {getStatusText()}
+                    <Text style={styles.subtitle}>{getStatusText()}</Text>
                 </View>
 
                 <Board board={board} onCellPress={handleCellPress} />

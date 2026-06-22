@@ -5,7 +5,7 @@ import { Gamepad2, Rocket, Grid3X3, LayoutGrid } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
-const Home = () => {
+export default function Home() {
     const { navigate } = useNavigation();
 
     const gamesList = [
