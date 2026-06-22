@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb } from 'lucide-react-native';
+import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb, Sun } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -36,6 +36,13 @@ export default function Home() {
             description: "Avoid the mines and clear the board! Flag suspicious cells and test your logic.",
             Icon: Bomb,
             backgroundColor: '#f59e0b',
+        },
+        {
+            id: 'LightsOut',
+            title: 'Lights Out',
+            description: 'Turn off all the lights to advance! Click cells to toggle the light and its neighbors.',
+            Icon: Sun,
+            backgroundColor: '#3b82f6',
         },
     ];
 

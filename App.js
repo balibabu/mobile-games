@@ -6,6 +6,7 @@ import TicTacToe from './src/screens/TicTacToe';
 import Tetris from './src/screens/Tetris';
 import Simon from './src/screens/Simon';
 import Minesweeper from './src/screens/Minesweeper';
+import LightsOut from './src/screens/LightsOut';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -21,6 +22,8 @@ const AppContent = () => {
             return <Simon />;
         case 'Minesweeper':
             return <Minesweeper />;
+        case 'LightsOut':
+            return <LightsOut />;
         default:
             return <Home />;
     }
