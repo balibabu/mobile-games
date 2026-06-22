@@ -1,52 +1,86 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { ArrowLeft, RotateCcw, Zap, Trophy, TrendingUp } from 'lucide-react-native';
+import { ArrowLeft, RotateCcw, Zap, Trophy, TrendingUp, Clock } from 'lucide-react-native';
 import { useNavigation } from '../../contexts/NavigationContext';
-import { createBoard, toggleCell, isSolved, calculateMoveLimit } from './gameLogic';
+import { createBoard, toggleCell, isSolved, calculateTimeLimit } from './gameLogic';
 
 const CELL_SIZE = Math.floor((Dimensions.get('window').width - 80) / 5);
-const MAX_LEVEL = 10;
 
 export default function LightsOut() {
     const { navigate } = useNavigation();
     const [level, setLevel] = useState(1);
     const [score, setScore] = useState(0);
     const [moves, setMoves] = useState(0);
-    const [board, setBoard] = useState(() => createBoard());
-    const [moveLimit, setMoveLimit] = useState(() => calculateMoveLimit(1));
+    const [board, setBoard] = useState(() => createBoard(1));
+    const [timeLeft, setTimeLeft] = useState(() => calculateTimeLimit(1));
     const [gameStatus, setGameStatus] = useState('playing');
     const [totalCleared, setTotalCleared] = useState(0);
     const timerRef = useRef(null);
+    const transitionTimerRef = useRef(null);
+
+    useEffect(() => {
+        if (gameStatus !== 'playing') {
+            return;
+        }
+
+        timerRef.current = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current);
+                    setGameStatus('lost');
+                    setScore(prevScore => Math.max(0, prevScore - 50));
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, [gameStatus]);
 
     const resetGame = useCallback(() => {
-        setBoard(createBoard());
-        setMoves(0);
-        setGameStatus('playing');
-        setMoveLimit(calculateMoveLimit(level));
         if (timerRef.current) {
-            clearTimeout(timerRef.current);
+            clearInterval(timerRef.current);
         }
+        if (transitionTimerRef.current) {
+            clearTimeout(transitionTimerRef.current);
+        }
+        setBoard(createBoard(level));
+        setMoves(0);
+        setTimeLeft(calculateTimeLimit(level));
+        setGameStatus('playing');
     }, [level]);
 
     const handleAutoLevel = useCallback(() => {
-        if (gameStatus !== 'playing') {return;}
+        if (gameStatus !== 'playing') { return; }
+
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
 
         setGameStatus('transitioning');
-        const nextLevel = Math.min(level + 1, MAX_LEVEL);
-        setScore(prev => prev + (moveLimit - moves) * 10 + 100);
+        const timeBonus = timeLeft * 5;
+        const moveBonus = Math.max(0, 100 - moves * 5);
+        setScore(prev => prev + timeBonus + moveBonus + 100);
         setTotalCleared(prev => prev + 1);
 
-        timerRef.current = setTimeout(() => {
+        const nextLevel = level + 1;
+
+        transitionTimerRef.current = setTimeout(() => {
             setLevel(nextLevel);
-            setBoard(createBoard());
+            setBoard(createBoard(nextLevel));
             setMoves(0);
-            setMoveLimit(calculateMoveLimit(nextLevel));
+            setTimeLeft(calculateTimeLimit(nextLevel));
             setGameStatus('playing');
         }, 1000);
-    }, [gameStatus, level, moves, moveLimit]);
+    }, [gameStatus, level, moves, timeLeft]);
 
     const handleCellPress = useCallback((row, col) => {
-        if (gameStatus !== 'playing') {return;}
+        if (gameStatus !== 'playing') { return; }
 
         const newBoard = toggleCell(board, row, col);
         const newMoves = moves + 1;
@@ -55,19 +89,28 @@ export default function LightsOut() {
 
         if (isSolved(newBoard)) {
             handleAutoLevel();
-        } else if (newMoves >= moveLimit) {
-            setGameStatus('lost');
-            setScore(prev => Math.max(0, prev - 50));
         }
-    }, [board, moves, moveLimit, gameStatus, handleAutoLevel]);
+    }, [board, moves, gameStatus, handleAutoLevel]);
 
     useEffect(() => {
         return () => {
             if (timerRef.current) {
-                clearTimeout(timerRef.current);
+                clearInterval(timerRef.current);
+            }
+            if (transitionTimerRef.current) {
+                clearTimeout(transitionTimerRef.current);
             }
         };
     }, []);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+    };
+
+    const timeLimit = calculateTimeLimit(level);
+    const timeRatio = timeLeft / timeLimit;
 
     return (
         <View style={styles.container}>
@@ -88,7 +131,7 @@ export default function LightsOut() {
                 <View style={styles.statItem}>
                     <Trophy size={16} color="#f4f4f5" strokeWidth={2.5} />
                     <Text style={styles.statLabel}>LEVEL</Text>
-                    <Text style={styles.statValue}>{level}/{MAX_LEVEL}</Text>
+                    <Text style={styles.statValue}>{level}</Text>
                 </View>
                 <View style={styles.statItem}>
                     <TrendingUp size={16} color="#10b981" strokeWidth={2.5} />
@@ -98,14 +141,20 @@ export default function LightsOut() {
             </View>
 
             <View style={styles.infoRow}>
-                <Text style={styles.infoText}>Moves: <Text style={[styles.infoValue, moves >= moveLimit ? styles.dangerText : {}]}>{moves}/{moveLimit}</Text></Text>
+                <View style={styles.infoItem}>
+                    <Clock size={14} color={timeRatio <= 0.2 ? '#ef4444' : '#71717a'} strokeWidth={2.5} />
+                    <Text style={styles.infoText}>Time: <Text style={[styles.infoValue, timeRatio <= 0.2 ? styles.dangerText : {}]}>{formatTime(timeLeft)}</Text></Text>
+                </View>
+                <View style={styles.infoItem}>
+                    <Text style={styles.infoText}>Moves: <Text style={styles.infoValue}>{moves}</Text></Text>
+                </View>
             </View>
 
             <View style={styles.boardContainer}>
                 {gameStatus === 'lost' ? (
                     <View style={styles.overlay}>
-                        <Text style={styles.overlayTitle}>Game Over</Text>
-                        <Text style={styles.overlayText}>No more moves left</Text>
+                        <Text style={styles.overlayTitle}>Time's Up!</Text>
+                        <Text style={styles.overlayText}>Level {level} not cleared</Text>
                         <TouchableOpacity onPress={resetGame} style={styles.overlayButton}>
                             <Text style={styles.overlayButtonText}>TRY AGAIN</Text>
                         </TouchableOpacity>
@@ -134,6 +183,10 @@ export default function LightsOut() {
                         ))}
                     </View>
                 )}
+            </View>
+
+            <View style={styles.timerBarContainer}>
+                <View style={[styles.timerBar, { width: `${timeRatio * 100}%`, backgroundColor: timeRatio <= 0.2 ? '#ef4444' : timeRatio <= 0.5 ? '#facc15' : '#10b981' }]} />
             </View>
 
             <View style={styles.controlsContainer}>
@@ -217,9 +270,14 @@ const styles = StyleSheet.create({
     },
     infoRow: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         width: '100%',
         marginBottom: 12,
+    },
+    infoItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
     },
     infoText: {
         fontSize: 14,
@@ -302,6 +360,18 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '800',
         letterSpacing: 1.5,
+    },
+    timerBarContainer: {
+        width: '100%',
+        height: 4,
+        backgroundColor: '#27272a',
+        borderRadius: 2,
+        overflow: 'hidden',
+        marginTop: 12,
+    },
+    timerBar: {
+        height: '100%',
+        borderRadius: 2,
     },
     controlsContainer: {
         width: '100%',

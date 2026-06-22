@@ -1,18 +1,57 @@
-export function createBoard() {
+export function createBoard(level = 1) {
     const board = [];
     for (let r = 0; r < 5; r++) {
         const row = [];
         for (let c = 0; c < 5; c++) {
-            row.push(Math.random() < 0.5);
+            row.push(false);
         }
         board.push(row);
     }
 
+    const minLights = getMinLights(level);
+    const maxLights = getMaxLights(level);
+    const numLights = minLights + Math.floor(Math.random() * (maxLights - minLights + 1));
+
+    const cells = [];
+    for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+            cells.push([r, c]);
+        }
+    }
+
+    for (let i = cells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cells[i], cells[j]] = [cells[j], cells[i]];
+    }
+
+    for (let i = 0; i < numLights; i++) {
+        const [r, c] = cells[i];
+        board[r][c] = true;
+    }
+
     if (isSolved(board)) {
-        return createBoard();
+        return createBoard(level);
     }
 
     return board;
+}
+
+function getMinLights(level) {
+    if (level <= 1) return 3;
+    if (level <= 3) return 4;
+    if (level <= 5) return 5;
+    if (level <= 7) return 6;
+    if (level <= 9) return 8;
+    return 10;
+}
+
+function getMaxLights(level) {
+    if (level <= 1) return 4;
+    if (level <= 3) return 6;
+    if (level <= 5) return 8;
+    if (level <= 7) return 10;
+    if (level <= 9) return 12;
+    return Math.min(15, 8 + level);
 }
 
 export function toggleCell(board, row, col) {
@@ -47,6 +86,6 @@ export function isSolved(board) {
     return true;
 }
 
-export function calculateMoveLimit(level) {
-    return 10 + Math.floor((level - 1) / 2) * 5;
+export function calculateTimeLimit(level) {
+    return 60 + (level - 1) * 30;
 }
