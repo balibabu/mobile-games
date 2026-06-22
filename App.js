@@ -4,6 +4,7 @@ import { NavigationProvider, useNavigation } from './src/contexts/NavigationCont
 import Home from './src/screens/Home';
 import TicTacToe from './src/screens/TicTacToe';
 import Tetris from './src/screens/Tetris';
+import Simon from './src/screens/Simon';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -15,6 +16,8 @@ const AppContent = () => {
             return <TicTacToe />;
         case 'Tetris':
             return <Tetris />;
+        case 'Simon':
+            return <Simon />;
         default:
             return <Home />;
     }

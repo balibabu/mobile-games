@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Grid3X3, LayoutGrid } from 'lucide-react-native';
+import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -22,6 +22,13 @@ export default function Home() {
             description: 'Retro block-dropping arcade action. Rotate, drop, and clear lines!',
             Icon: LayoutGrid,
             backgroundColor: '#10b981',
+        },
+        {
+            id: 'Simon',
+            title: 'Simon',
+            description: 'Memorize and repeat the growing color sequence. How far can you go?',
+            Icon: Lightbulb,
+            backgroundColor: '#a855f7',
         },
     ];
 
