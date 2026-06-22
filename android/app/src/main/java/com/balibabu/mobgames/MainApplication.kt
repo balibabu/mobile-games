@@ -1,4 +1,4 @@
-package com.mobgames
+package com.balibabu.mobgames
 
 import android.app.Application
 import com.facebook.react.PackageList
