@@ -54,7 +54,7 @@ const PuyoPuyo = () => {
     const settlingRef = useRef(settling);
     settlingRef.current = settling;
 
-    const gameSpeed = isPaused || gameOver || !currentPair || settling ? null : Math.max(200, 800 - (level - 1) * 80);
+    const gameSpeed = isPaused || gameOver || !currentPair || settling ? null : Math.max(200, 800 - (level - 1) * 20);
 
     const spawnNewPair = useCallback((currentLevel, currentNextPairColors) => {
         const pairColors = currentNextPairColors;

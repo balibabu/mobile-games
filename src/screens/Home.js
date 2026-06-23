@@ -51,13 +51,6 @@ export default function Home() {
             Icon: CircleDot,
             backgroundColor: '#ec4899',
         },
-        {
-            id: 'Mancala',
-            title: 'Bantumi',
-            description: 'Mancala Classic - Sow seeds, capture opponent pieces, and collect the most to win!',
-            Icon: Gem,
-            backgroundColor: '#f97316',
-        },
     ];
 
     return (
