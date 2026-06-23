@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb, Sun } from 'lucide-react-native';
+import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -43,6 +43,13 @@ export default function Home() {
             description: 'Turn off all the lights to advance! Click cells to toggle the light and its neighbors.',
             Icon: Sun,
             backgroundColor: '#3b82f6',
+        },
+        {
+            id: 'PuyoPuyo',
+            title: 'Puyo Puyo',
+            description: 'Match 4+ same-colored puyos to pop them! Build chains for big points as speed increases.',
+            Icon: CircleDot,
+            backgroundColor: '#ec4899',
         },
     ];
 
