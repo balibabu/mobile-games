@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
@@ -6,10 +6,11 @@ import { BOARD_COLS, useInterval, getRandomPairForLevel } from './constants';
 import {
     createEmptyGrid,
     checkCollision,
+    canPlacePair,
     rotatePairCW,
     mergePair,
     applyGravity,
-    processChain,
+    findGroupsAndRemove,
     isGameOver,
 } from './gameLogic';
 import StatsRow from './StatsRow';
@@ -19,14 +20,13 @@ import Controls from './Controls';
 const PAIR_START_COL = Math.floor(BOARD_COLS / 2);
 
 const createPair = (pairColors, rotation = 0) => {
-    const topRow = 0;
-    const bottomRow = 1;
     return {
         top: pairColors.top,
         bottom: pairColors.bottom,
-        topRow,
-        bottomRow,
-        col: PAIR_START_COL,
+        topRow: 0,
+        topCol: PAIR_START_COL,
+        bottomRow: 1,
+        bottomCol: PAIR_START_COL,
         rotation,
     };
 };
@@ -43,49 +43,91 @@ const PuyoPuyo = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [settling, setSettling] = useState(false);
 
+    const gridRef = useRef(grid);
+    gridRef.current = grid;
+    const currentPairRef = useRef(currentPair);
+    currentPairRef.current = currentPair;
+    const levelRef = useRef(level);
+    levelRef.current = level;
+    const nextPairColorsRef = useRef(nextPairColors);
+    nextPairColorsRef.current = nextPairColors;
+    const settlingRef = useRef(settling);
+    settlingRef.current = settling;
+
     const gameSpeed = isPaused || gameOver || !currentPair || settling ? null : Math.max(200, 800 - (level - 1) * 80);
 
-    const settleBoard = useCallback((currentGrid) => {
-        const gravResult = applyGravity(currentGrid);
-        if (!gravResult.moved) {
-            const chainResult = processChain(currentGrid);
-            if (chainResult.chainCount > 0) {
-                const addedScore = chainResult.chainCount * chainResult.chainCount * 50 + chainResult.totalCleared * 10;
-                setScore((prev) => prev + addedScore);
-                setChainPop(chainResult.chainCount);
-                setTotalChains((prev) => prev + chainResult.chainCount);
-                setLevel((prev) => {
-                    const newLevel = Math.min(10, prev + 1);
-                    return newLevel;
-                });
-                setTimeout(() => setChainPop(0), 1000);
-                setSettling(true);
-                setTimeout(() => settleBoard(chainResult.grid), 300);
-            } else {
+    const spawnNewPair = useCallback((currentLevel, currentNextPairColors) => {
+        const pairColors = currentNextPairColors;
+        const newNextColors = getRandomPairForLevel(currentLevel);
+        const newPair = createPair(pairColors);
+
+        setGrid((prevGrid) => {
+            if (canPlacePair(prevGrid, newPair)) {
+                setNextPairColors(newNextColors);
+                setCurrentPair(newPair);
                 setSettling(false);
-                if (isGameOver(currentGrid)) {
-                    setGameOver(true);
-                } else {
-                    const colors = getRandomPairForLevel(level);
-                    setNextPairColors(colors);
-                    const newPair = createPair(colors);
-                    setCurrentPair(newPair);
-                }
+            } else {
+                const mergedGrid = mergePair(prevGrid, newPair);
+                setGrid(mergedGrid);
+                setGameOver(true);
+                setCurrentPair(null);
+                setSettling(false);
             }
+            return prevGrid;
+        });
+    }, []);
+
+    const settleBoard = useCallback((currentGrid, chainCount = 0, totalCleared = 0) => {
+        const gravResult = applyGravity(currentGrid);
+        if (gravResult.moved) {
+            setSettling(true);
+            setGrid(gravResult.grid);
+            setTimeout(() => settleBoard(gravResult.grid, chainCount, totalCleared), 150);
             return;
         }
-        setSettling(true);
-        setGrid(gravResult.grid);
-        setTimeout(() => settleBoard(gravResult.grid), 150);
-    }, [level]);
+
+        const clearResult = findGroupsAndRemove(currentGrid);
+        if (clearResult.chainCount > 0) {
+            const newChainCount = chainCount + 1;
+            const newTotalCleared = totalCleared + clearResult.totalCleared;
+            const addedScore = newChainCount * newChainCount * 50 + newTotalCleared * 10;
+            setScore((prev) => prev + addedScore);
+            setChainPop(newChainCount);
+            setTotalChains((prev) => prev + 1);
+            setLevel((prev) => Math.min(10, prev + 1));
+            setTimeout(() => setChainPop(0), 1000);
+            setSettling(true);
+            setGrid(clearResult.grid);
+            setTimeout(() => settleBoard(clearResult.grid, newChainCount, newTotalCleared), 300);
+            return;
+        }
+
+        if (chainCount > 0) {
+            setGrid(currentGrid);
+        }
+
+        if (isGameOver(currentGrid)) {
+            setGameOver(true);
+            setSettling(false);
+            setCurrentPair(null);
+            return;
+        }
+
+        const lv = levelRef.current;
+        const npc = nextPairColorsRef.current;
+        spawnNewPair(lv, npc);
+    }, [spawnNewPair]);
 
     const tryMoveDown = useCallback(() => {
         if (gameOver || isPaused || !currentPair || settling) return;
-        const newBottom = currentPair.bottomRow + 1;
-        const newTop = currentPair.topRow + 1;
 
-        const topBlocked = checkCollision(grid, newTop, currentPair.col);
-        const bottomBlocked = newBottom >= 0 && checkCollision(grid, newBottom, currentPair.col);
+        let newTopRow = currentPair.topRow + 1;
+        let newTopCol = currentPair.topCol;
+        let newBottomRow = currentPair.bottomRow + 1;
+        let newBottomCol = currentPair.bottomCol;
+
+        const topBlocked = checkCollision(grid, newTopRow, newTopCol);
+        const bottomBlocked = checkCollision(grid, newBottomRow, newBottomCol);
 
         if (!topBlocked && !bottomBlocked) {
             setCurrentPair((prev) => ({
@@ -105,12 +147,15 @@ const PuyoPuyo = () => {
         if (gameOver || isPaused || !currentPair || settling) return;
         let pair = { ...currentPair };
         while (true) {
-            const newBottom = pair.bottomRow + 1;
-            const newTop = pair.topRow + 1;
-            const topBlocked = checkCollision(grid, newTop, pair.col);
-            const bottomBlocked = newBottom >= 0 && checkCollision(grid, newBottom, pair.col);
+            const newTopRow = pair.topRow + 1;
+            const newTopCol = pair.topCol;
+            const newBottomRow = pair.bottomRow + 1;
+            const newBottomCol = pair.bottomCol;
+
+            const topBlocked = checkCollision(grid, newTopRow, newTopCol);
+            const bottomBlocked = checkCollision(grid, newBottomRow, newBottomCol);
             if (topBlocked || bottomBlocked) break;
-            pair = { ...pair, topRow: newTop, bottomRow: newBottom };
+            pair = { ...pair, topRow: newTopRow, bottomRow: newBottomRow };
         }
         const mergedGrid = mergePair(grid, pair);
         setGrid(mergedGrid);
@@ -120,23 +165,23 @@ const PuyoPuyo = () => {
 
     const moveLeft = useCallback(() => {
         if (gameOver || isPaused || !currentPair || settling) return;
-        const newCol = currentPair.col - 1;
-        if (newCol < 0) return;
-        const topBlocked = currentPair.topRow >= 0 && checkCollision(grid, currentPair.topRow, newCol);
-        const bottomBlocked = currentPair.bottomRow >= 0 && checkCollision(grid, currentPair.bottomRow, newCol);
+        const newTopCol = currentPair.topCol - 1;
+        const newBottomCol = currentPair.bottomCol - 1;
+        const topBlocked = currentPair.topRow >= 0 && checkCollision(grid, currentPair.topRow, newTopCol);
+        const bottomBlocked = currentPair.bottomRow >= 0 && checkCollision(grid, currentPair.bottomRow, newBottomCol);
         if (!topBlocked && !bottomBlocked) {
-            setCurrentPair((prev) => ({ ...prev, col: newCol }));
+            setCurrentPair((prev) => ({ ...prev, topCol: prev.topCol - 1, bottomCol: prev.bottomCol - 1 }));
         }
     }, [gameOver, isPaused, currentPair, grid, settling]);
 
     const moveRight = useCallback(() => {
         if (gameOver || isPaused || !currentPair || settling) return;
-        const newCol = currentPair.col + 1;
-        if (newCol >= BOARD_COLS) return;
-        const topBlocked = currentPair.topRow >= 0 && checkCollision(grid, currentPair.topRow, newCol);
-        const bottomBlocked = currentPair.bottomRow >= 0 && checkCollision(grid, currentPair.bottomRow, newCol);
+        const newTopCol = currentPair.topCol + 1;
+        const newBottomCol = currentPair.bottomCol + 1;
+        const topBlocked = currentPair.topRow >= 0 && checkCollision(grid, currentPair.topRow, newTopCol);
+        const bottomBlocked = currentPair.bottomRow >= 0 && checkCollision(grid, currentPair.bottomRow, newBottomCol);
         if (!topBlocked && !bottomBlocked) {
-            setCurrentPair((prev) => ({ ...prev, col: newCol }));
+            setCurrentPair((prev) => ({ ...prev, topCol: prev.topCol + 1, bottomCol: prev.bottomCol + 1 }));
         }
     }, [gameOver, isPaused, currentPair, grid, settling]);
 
@@ -156,11 +201,11 @@ const PuyoPuyo = () => {
         setGameOver(false);
         setIsPaused(false);
         setSettling(false);
-        const colors = getRandomPairForLevel(1);
-        const newPair = createPair(colors);
+        const initialNextColors = getRandomPairForLevel(1);
+        const initialPairColors = getRandomPairForLevel(1);
+        setNextPairColors(initialNextColors);
+        const newPair = createPair(initialPairColors);
         setCurrentPair(newPair);
-        const nextColors = getRandomPairForLevel(1);
-        setNextPairColors(nextColors);
     }, []);
 
     useInterval(tryMoveDown, gameSpeed);
@@ -170,12 +215,14 @@ const PuyoPuyo = () => {
     }, []);
 
     const displayGrid = grid.map((row) => [...row]);
-    if (currentPair && !gameOver && !settling) {
-        if (currentPair.topRow >= 0 && currentPair.topRow < displayGrid.length) {
-            displayGrid[currentPair.topRow][currentPair.col] = currentPair.top;
+    if (currentPair && !gameOver) {
+        if (currentPair.topRow >= 0 && currentPair.topRow < displayGrid.length &&
+            currentPair.topCol >= 0 && currentPair.topCol < BOARD_COLS) {
+            displayGrid[currentPair.topRow][currentPair.topCol] = currentPair.top;
         }
-        if (currentPair.bottomRow >= 0 && currentPair.bottomRow < displayGrid.length) {
-            displayGrid[currentPair.bottomRow][currentPair.col] = currentPair.bottom;
+        if (currentPair.bottomRow >= 0 && currentPair.bottomRow < displayGrid.length &&
+            currentPair.bottomCol >= 0 && currentPair.bottomCol < BOARD_COLS) {
+            displayGrid[currentPair.bottomRow][currentPair.bottomCol] = currentPair.bottom;
         }
     }
 

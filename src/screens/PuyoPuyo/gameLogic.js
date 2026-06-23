@@ -15,46 +15,64 @@ export function checkCollision(grid, row, col) {
 }
 
 export function canPlacePair(grid, pair) {
-    const topOk = !checkCollision(grid, pair.topRow, pair.col);
-    const botOk = !checkCollision(grid, pair.bottomRow, pair.col);
+    const topOk = !checkCollision(grid, pair.topRow, pair.topCol);
+    const botOk = !checkCollision(grid, pair.bottomRow, pair.bottomCol);
     return topOk && botOk;
 }
 
 export function rotatePairCW(pair, grid) {
-    const { top, bottom, topRow, bottomRow, col } = pair;
+    const pivotRow = pair.bottomRow;
+    const pivotCol = pair.bottomCol;
     const newRotation = (pair.rotation + 1) % 4;
-    let newTopRow = topRow;
-    let newBottomRow = bottomRow;
-    let newCol = col;
 
+    let newTopRow, newTopCol;
     switch (newRotation) {
         case 0:
-            newTopRow = pair.bottomRow - 1;
-            newBottomRow = pair.bottomRow;
+            newTopRow = pivotRow - 1;
+            newTopCol = pivotCol;
             break;
         case 1:
-            newTopRow = pair.bottomRow;
-            newBottomRow = pair.bottomRow;
-            newCol = col + 1;
+            newTopRow = pivotRow;
+            newTopCol = pivotCol + 1;
             break;
         case 2:
-            newTopRow = pair.bottomRow;
-            newBottomRow = pair.bottomRow + 1;
+            newTopRow = pivotRow + 1;
+            newTopCol = pivotCol;
             break;
         case 3:
-            newTopRow = pair.bottomRow;
-            newBottomRow = pair.bottomRow;
-            newCol = col - 1;
+            newTopRow = pivotRow;
+            newTopCol = pivotCol - 1;
             break;
     }
 
     if (
-        newCol < 0 || newCol >= BOARD_COLS ||
+        newTopCol < 0 || newTopCol >= BOARD_COLS ||
         newTopRow < 0 || newTopRow >= BOARD_ROWS ||
-        newBottomRow < 0 || newBottomRow >= BOARD_ROWS ||
-        (newTopRow >= 0 && grid[newTopRow][newCol] !== null) ||
-        (newBottomRow >= 0 && grid[newBottomRow][newCol] !== null)
+        grid[newTopRow][newTopCol] !== null
     ) {
+        let kickCol = pivotCol;
+        if (newTopCol < 0) kickCol = pivotCol + 1;
+        else if (newTopCol >= BOARD_COLS) kickCol = pivotCol - 1;
+
+        if (kickCol !== pivotCol) {
+            let kickTopCol = newTopCol + (kickCol - pivotCol);
+            if (
+                kickCol >= 0 && kickCol < BOARD_COLS &&
+                kickTopCol >= 0 && kickTopCol < BOARD_COLS &&
+                newTopRow >= 0 && newTopRow < BOARD_ROWS &&
+                grid[newTopRow][kickTopCol] === null &&
+                grid[pivotRow][kickCol] === null
+            ) {
+                return {
+                    ...pair,
+                    rotation: newRotation,
+                    topRow: newTopRow,
+                    topCol: kickTopCol,
+                    bottomRow: pivotRow,
+                    bottomCol: kickCol,
+                };
+            }
+        }
         return { ...pair, rotation: pair.rotation };
     }
 
@@ -62,18 +80,19 @@ export function rotatePairCW(pair, grid) {
         ...pair,
         rotation: newRotation,
         topRow: newTopRow,
-        bottomRow: newBottomRow,
-        col: newCol,
+        topCol: newTopCol,
+        bottomRow: pivotRow,
+        bottomCol: pivotCol,
     };
 }
 
 export function mergePair(grid, pair) {
     const newGrid = grid.map((row) => [...row]);
-    if (pair.topRow >= 0 && pair.topRow < BOARD_ROWS) {
-        newGrid[pair.topRow][pair.col] = pair.top;
+    if (pair.topRow >= 0 && pair.topRow < BOARD_ROWS && pair.topCol >= 0 && pair.topCol < BOARD_COLS) {
+        newGrid[pair.topRow][pair.topCol] = pair.top;
     }
-    if (pair.bottomRow >= 0 && pair.bottomRow < BOARD_ROWS) {
-        newGrid[pair.bottomRow][pair.col] = pair.bottom;
+    if (pair.bottomRow >= 0 && pair.bottomRow < BOARD_ROWS && pair.bottomCol >= 0 && pair.bottomCol < BOARD_COLS) {
+        newGrid[pair.bottomRow][pair.bottomCol] = pair.bottom;
     }
     return newGrid;
 }
@@ -140,32 +159,19 @@ export function removeGroups(grid, groups) {
     return newGrid;
 }
 
-export function processChain(grid) {
-    let currentGrid = grid;
-    let chainCount = 0;
-    let totalCleared = 0;
-
-    while (true) {
-        const groups = findConnectedGroups(currentGrid);
-        if (groups.length === 0) break;
-
-        totalCleared += groups.reduce((sum, g) => sum + g.length, 0);
-        currentGrid = removeGroups(currentGrid, groups);
-        chainCount++;
-
-        const result = applyGravity(currentGrid);
-        currentGrid = result.grid;
+export function findGroupsAndRemove(grid) {
+    const groups = findConnectedGroups(grid);
+    if (groups.length === 0) {
+        return { grid, chainCount: 0, totalCleared: 0 };
     }
-
-    return { grid: currentGrid, chainCount, totalCleared };
-}
-
-export function calculateScore(chainCount, totalCleared) {
-    const chainBonus = chainCount * chainCount * 50;
-    const puyoBonus = totalCleared * 10;
-    return chainBonus + puyoBonus;
+    const totalCleared = groups.reduce((sum, g) => sum + g.length, 0);
+    const newGrid = removeGroups(grid, groups);
+    return { grid: newGrid, chainCount: 1, totalCleared };
 }
 
 export function isGameOver(grid) {
-    return grid[0].some((cell) => cell !== null) || grid[1].some((cell) => cell !== null);
+    for (let c = 0; c < BOARD_COLS; c++) {
+        if (grid[2][c] !== null) return true;
+    }
+    return false;
 }
