@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Gem } from 'lucide-react-native';
+import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Gem, Package } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -50,6 +50,13 @@ export default function Home() {
             description: 'Match 4+ same-colored puyos to pop them! Build chains for big points as speed increases.',
             Icon: CircleDot,
             backgroundColor: '#ec4899',
+        },
+        {
+            id: 'Bantumi',
+            title: 'Bantumi',
+            description: 'Classic Mancala strategy. Capture gems and outsmart the bot!',
+            Icon: Package,
+            backgroundColor: '#8b5cf6',
         },
     ];
 

@@ -8,6 +8,7 @@ import Simon from './src/screens/Simon';
 import Minesweeper from './src/screens/Minesweeper';
 import LightsOut from './src/screens/LightsOut';
 import PuyoPuyo from './src/screens/PuyoPuyo';
+import Bantumi from './src/screens/Bantumi';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -27,6 +28,8 @@ const AppContent = () => {
             return <LightsOut />;
         case 'PuyoPuyo':
             return <PuyoPuyo />;
+        case 'Bantumi':
+            return <Bantumi />;
         default:
             return <Home />;
     }
