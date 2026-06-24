@@ -3,6 +3,14 @@ export const BOT_START = 7;
 export const BOT_STORE = 13;
 export const PLAYER_STORE = 6;
 export const INITIAL_GEMS = 4;
+export const PLAYER_PITS = [0, 1, 2, 3, 4, 5];
+export const BOT_PITS = [7, 8, 9, 10, 11, 12];
+
+export const isPlayerStore = (i) => i === PLAYER_STORE;
+export const isBotStore = (i) => i === BOT_STORE;
+export const isStore = (i) => isPlayerStore(i) || isBotStore(i);
+export const isPlayerPit = (i) => i >= 0 && i <= 5;
+export const isBotPit = (i) => i >= 7 && i <= 12;
 
 export const getInitialState = () => {
   const pits = new Array(PITS_COUNT).fill(0);
@@ -28,27 +36,38 @@ export const makeMove = (pits, pitIndex) => {
   newPits[pitIndex] = 0;
   let current = pitIndex;
 
+  const playerMoved = isPlayerPit(pitIndex);
+  const ownStore = playerMoved ? PLAYER_STORE : BOT_STORE;
+  const opponentStore = playerMoved ? BOT_STORE : PLAYER_STORE;
+
   while (stones > 0) {
     current = (current + 1) % PITS_COUNT;
+    if (current === opponentStore) continue;
     newPits[current] += 1;
     stones -= 1;
   }
 
-  // Capture logic: if last stone lands in player's empty pit, capture both
-  const isPlayerPit = current >= 0 && current <= 5;
-  const isBotPit = current >= 7 && current <= 12;
-  const playerMoved = pitIndex >= 0 && pitIndex <= 5;
-  const botMoved = pitIndex >= 7 && pitIndex <= 12;
+  let extraTurn = false;
 
-  if (playerMoved && isPlayerPit && newPits[current] === 1) {
+  if (current === ownStore) {
+    extraTurn = true;
+  } else if (
+    playerMoved &&
+    isPlayerPit(current) &&
+    newPits[current] === 1
+  ) {
     const opposite = 12 - current;
     if (newPits[opposite] > 0) {
       newPits[PLAYER_STORE] += newPits[opposite] + 1;
       newPits[opposite] = 0;
       newPits[current] = 0;
     }
-  } else if (botMoved && isBotPit && newPits[current] === 1) {
-    const opposite = 12 - (current - 7);
+  } else if (
+    !playerMoved &&
+    isBotPit(current) &&
+    newPits[current] === 1
+  ) {
+    const opposite = 12 - current;
     if (newPits[opposite] > 0) {
       newPits[BOT_STORE] += newPits[opposite] + 1;
       newPits[opposite] = 0;
@@ -56,9 +75,7 @@ export const makeMove = (pits, pitIndex) => {
     }
   }
 
-  const storeHit = current === PLAYER_STORE || current === BOT_STORE;
-
-  return { newPits, storeHit };
+  return { newPits, extraTurn };
 };
 
 export const isGameOver = (pits) => {

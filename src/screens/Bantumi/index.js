@@ -18,7 +18,134 @@ import {
   getWinner,
   findBestMove,
   getValidMoves,
+  isStore as isStoreIndex,
+  isPlayerPit,
+  isBotPit,
+  isPlayerStore,
 } from './gameLogic';
+
+function Pit({ gems, index, pitSize, isPlayer, disabled, onPress }) {
+  const isEmpty = gems === 0;
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      disabled={disabled || isEmpty}
+      onPress={() => onPress(index)}
+      style={[
+        styles.cell,
+        {
+          width: pitSize,
+          height: pitSize,
+          opacity: isEmpty ? 0.35 : 1,
+          backgroundColor: !isPlayer ? '#111111' : undefined,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.cellNumber,
+          { color: isPlayer ? '#4ade80' : '#f87171', fontSize: pitSize * 0.45 },
+        ]}
+      >
+        {gems}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+function Store({ gems, label, width, height, isPlayer }) {
+  return (
+    <View
+      style={[
+        styles.store,
+        { width, height },
+        { borderColor: isPlayer ? '#4ade8040' : '#f8717140' },
+      ]}
+    >
+      <Text style={styles.storeLabel}>{label}</Text>
+      <Text
+        style={[
+          styles.storeValue,
+          { color: isPlayer ? '#4ade80' : '#f87171' },
+        ]}
+      >
+        {gems}
+      </Text>
+    </View>
+  );
+}
+
+function StatsRow({ playerStore, botStore, isBotTurn }) {
+  return (
+    <View style={styles.statsRow}>
+      <View style={styles.statBox}>
+        <Text style={styles.statLabel}>Your Store</Text>
+        <Text style={styles.statValue}>{playerStore}</Text>
+      </View>
+      <View style={styles.statBox}>
+        <Text style={styles.statLabel}>
+          {isBotTurn ? 'Bot Turn' : 'Your Turn'}
+        </Text>
+      </View>
+      <View style={styles.statBox}>
+        <Text style={styles.statLabel}>Bot Store</Text>
+        <Text style={styles.statValue}>{botStore}</Text>
+      </View>
+    </View>
+  );
+}
+
+function GameBoard({ pits, pitSize, storeW, storeH, onPitPress, isBotTurn, gameOver }) {
+  const disabled = isBotTurn || gameOver;
+  return (
+    <View style={styles.board}>
+      <View style={styles.row}>
+        <Store
+          gems={pits[13]}
+          label="Bot"
+          width={storeW}
+          height={storeH}
+          isPlayer={false}
+        />
+        <View style={styles.pitsColumn}>
+          <View style={styles.pitsRow}>
+            {[12, 11, 10, 9, 8, 7].map((i) => (
+              <Pit
+                key={i}
+                index={i}
+                gems={pits[i]}
+                pitSize={pitSize}
+                isPlayer={false}
+                disabled={disabled}
+                onPress={onPitPress}
+              />
+            ))}
+          </View>
+          <View style={styles.pitsRow}>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <Pit
+                key={i}
+                index={i}
+                gems={pits[i]}
+                pitSize={pitSize}
+                isPlayer={true}
+                disabled={disabled}
+                onPress={onPitPress}
+              />
+            ))}
+          </View>
+        </View>
+        <Store
+          gems={pits[6]}
+          label="You"
+          width={storeW}
+          height={storeH}
+          isPlayer={true}
+        />
+      </View>
+    </View>
+  );
+}
 
 export default function Bantumi() {
   const { navigate } = useNavigation();
@@ -35,11 +162,8 @@ export default function Bantumi() {
     setWinner(null);
   }, []);
 
-  const handleBotMove = useCallback((currentPits) => {
-    const move = findBestMove(currentPits);
-    if (move === null || move === undefined) return;
-
-    const { newPits } = makeMove(currentPits, move);
+  const applyMove = useCallback((currentPits, pitIndex, isBot) => {
+    const { newPits, extraTurn } = makeMove(currentPits, pitIndex);
 
     if (isGameOver(newPits)) {
       const finalPits = finalizeGame(newPits);
@@ -49,43 +173,36 @@ export default function Bantumi() {
       return;
     }
 
-    const botMoves = getValidMoves(newPits, true);
-    if (botMoves.length === 0) {
+    if (extraTurn) {
       setPits(newPits);
-      setIsBotTurn(false);
+      const moves = getValidMoves(newPits, isBot);
+      if (moves.length === 0) {
+        setIsBotTurn(!isBot);
+      }
       return;
     }
 
     setPits(newPits);
-    setIsBotTurn((p) => !p);
+    setIsBotTurn((prev) => !prev);
   }, []);
 
   const handlePlayerMove = useCallback(
     (pitIndex) => {
       if (isBotTurn || gameOver) return;
-      if (pitIndex < 0 || pitIndex > 5) return;
+      if (!isPlayerPit(pitIndex)) return;
       if (pits[pitIndex] === 0) return;
-
-      const { newPits } = makeMove(pits, pitIndex);
-
-      if (isGameOver(newPits)) {
-        const finalPits = finalizeGame(newPits);
-        setPits(finalPits);
-        setGameOver(true);
-        setWinner(getWinner(finalPits));
-        return;
-      }
-
-      const botMoves = getValidMoves(newPits, true);
-      if (botMoves.length === 0) {
-        setPits(newPits);
-        return;
-      }
-
-      setPits(newPits);
-      setIsBotTurn(true);
+      applyMove(pits, pitIndex, false);
     },
-    [isBotTurn, gameOver, pits]
+    [isBotTurn, gameOver, pits, applyMove],
+  );
+
+  const handleBotMove = useCallback(
+    (currentPits) => {
+      const move = findBestMove(currentPits);
+      if (move === null || move === undefined) return;
+      applyMove(currentPits, move, true);
+    },
+    [applyMove],
   );
 
   useEffect(() => {
@@ -102,43 +219,6 @@ export default function Bantumi() {
   const storeW = 44;
   const storeH = pitSize * 2 + 20;
 
-  const renderCell = (index) => {
-    const gems = pits[index];
-    const isStore = index === 6 || index === 13;
-    const isPlayer = index < 6 || index === 6;
-    const isEmpty = gems === 0;
-
-    return (
-      <TouchableOpacity
-        key={index}
-        activeOpacity={isStore ? 1 : 0.7}
-        disabled={isStore || isBotTurn || gameOver || isEmpty || !isPlayer}
-        onPress={() => handlePlayerMove(index)}
-        style={[
-          styles.cell,
-          {
-            width: isStore ? storeW : pitSize,
-            height: isStore ? storeH : pitSize,
-            opacity: isEmpty ? 0.35 : 1,
-            backgroundColor: !isPlayer && !isStore ? '#111111' : undefined,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.cellNumber,
-            {
-              color: isPlayer ? '#4ade80' : '#f87171',
-              fontSize: isStore ? pitSize * 0.5 : pitSize * 0.45,
-            },
-          ]}
-        >
-          {gems}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <StatusBar barStyle="light-content" backgroundColor="#09090b" />
@@ -150,37 +230,22 @@ export default function Bantumi() {
         <View style={styles.backBtn} />
       </View>
 
-      <View style={styles.statsRow}>
-        <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Your Store</Text>
-          <Text style={styles.statValue}>{pits[6]}</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statLabel}>{isBotTurn ? 'Bot Turn' : 'Your Turn'}</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Bot Store</Text>
-          <Text style={styles.statValue}>{pits[13]}</Text>
-        </View>
-      </View>
+      <StatsRow
+        playerStore={pits[6]}
+        botStore={pits[13]}
+        isBotTurn={isBotTurn}
+      />
 
       <View style={styles.boardWrap}>
-        <View style={[styles.board, { width: boardWidth + storeW * 2 + 16 }]}>
-          <View style={styles.row}>
-            {renderCell(13)}
-            <View style={styles.pitsRow}>
-              {[12, 11, 10, 9, 8, 7].map((i) => renderCell(i))}
-            </View>
-            {renderCell(6)}
-          </View>
-          <View style={styles.row}>
-            {renderCell(6)}
-            <View style={styles.pitsRow}>
-              {[0, 1, 2, 3, 4, 5].map((i) => renderCell(i))}
-            </View>
-            {renderCell(13)}
-          </View>
-        </View>
+        <GameBoard
+          pits={pits}
+          pitSize={pitSize}
+          storeW={storeW}
+          storeH={storeH}
+          onPitPress={handlePlayerMove}
+          isBotTurn={isBotTurn}
+          gameOver={gameOver}
+        />
       </View>
 
       {gameOver && (
@@ -277,6 +342,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  pitsColumn: {
+    flexDirection: 'column',
+  },
   pitsRow: {
     flexDirection: 'row',
   },
@@ -287,6 +355,24 @@ const styles = StyleSheet.create({
     borderColor: '#27272a',
   },
   cellNumber: {
+    fontWeight: '900',
+  },
+  store: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#27272a',
+    borderRadius: 4,
+  },
+  storeLabel: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#71717a',
+    letterSpacing: 1,
+    marginBottom: 2,
+  },
+  storeValue: {
+    fontSize: 18,
     fontWeight: '900',
   },
   overlay: {
