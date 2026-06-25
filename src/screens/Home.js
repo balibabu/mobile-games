@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Grid3X3, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Gem, Package } from 'lucide-react-native';
+import { Gamepad2, Rocket, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Gem, Package } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -11,9 +11,9 @@ export default function Home() {
     const gamesList = [
         {
             id: 'TicTacToe',
-            title: 'Tic-Tac-Toe',
+            title: 'Tic Tac Toe',
             description: 'Face off against an unbeatable Minimax AI bot. Can you get a draw or win?',
-            Icon: Grid3X3,
+            Icon: Hash,
             backgroundColor: '#ef4444',
         },
         {
