@@ -70,3 +70,15 @@ export const getBestMove = (currentBoard) => {
     }
     return bestMove;
 };
+
+export const getRandomMove = (currentBoard) => {
+    const availableMoves = [];
+    for (let i = 0; i < 9; i++) {
+        if (currentBoard[i] === null) {
+            availableMoves.push(i);
+        }
+    }
+    if (availableMoves.length === 0) return -1;
+    const randomIndex = Math.floor(Math.random() * availableMoves.length);
+    return availableMoves[randomIndex];
+};
