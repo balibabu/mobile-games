@@ -3,10 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { RotateCw, ArrowLeft, ArrowDown, ArrowRight, ArrowBigDown } from 'lucide-react-native';
 
 const Controls = ({
-    isPaused,
-    gameOver,
-    togglePause,
-    resetGame,
     rotate,
     moveLeft,
     moveDown,

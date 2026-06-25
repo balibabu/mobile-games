@@ -173,10 +173,6 @@ const Tetris = () => {
                     resetGame={resetGame}
                 />
                 <Controls
-                    isPaused={isPaused}
-                    gameOver={gameOver}
-                    togglePause={() => setIsPaused(!isPaused)}
-                    resetGame={resetGame}
                     rotate={rotate}
                     moveLeft={moveLeft}
                     moveDown={moveDown}

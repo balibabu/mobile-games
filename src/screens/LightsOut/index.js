@@ -113,7 +113,6 @@ export default function LightsOut() {
 
     return (
         <View style={styles.container}>
-            {/* Unified Global Header Component */}
             <Header title="Lights Out" />
 
             <View style={styles.statsContainer}>
@@ -181,13 +180,6 @@ export default function LightsOut() {
 
             <View style={styles.timerBarContainer}>
                 <View style={[styles.timerBar, { width: `${timeRatio * 100}%`, backgroundColor: timeRatio <= 0.2 ? '#ef4444' : timeRatio <= 0.5 ? '#facc15' : '#10b981' }]} />
-            </View>
-
-            <View style={styles.controlsContainer}>
-                <TouchableOpacity onPress={resetGame} style={styles.resetButton}>
-                    <RotateCcw size={16} color="#f4f4f5" strokeWidth={2} />
-                    <Text style={styles.resetText}>RESET BOARD</Text>
-                </TouchableOpacity>
             </View>
 
             <View style={styles.footer}>
