@@ -17,26 +17,6 @@ const Controls = ({
 
     return (
         <View style={styles.controlsContainer}>
-            {/* Game State Actions */}
-            <View style={styles.gameActionsRow}>
-                <TouchableOpacity
-                    style={styles.gameActionButton}
-                    onPress={togglePause}
-                    disabled={gameOver}
-                    activeOpacity={0.7}
-                >
-                    <Text style={styles.gameActionButtonText}>
-                        {isPaused ? 'RESUME' : 'PAUSE'}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.gameActionButton}
-                    onPress={resetGame}
-                    activeOpacity={0.7}
-                >
-                    <Text style={styles.gameActionButtonText}>RESET</Text>
-                </TouchableOpacity>
-            </View>
 
             {/* Joystick/GamePad layout */}
             <View style={styles.gamePadRow}>

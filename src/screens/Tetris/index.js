@@ -161,7 +161,7 @@ const Tetris = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#09090b" />
-            <Header title="Tetris Arcade" />
+            <Header title="Tetris Arcade" pause={{ isPaused, setIsPaused }} />
             <View style={styles.container}>
                 <StatsRow score={score} level={level} lines={lines} nextPieceKey={nextPieceKey} />
                 <GameBoard

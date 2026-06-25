@@ -1,28 +1,26 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, Pause, Play } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 
-const Header = ({ title, showBack = true }) => {
-    const { goBack, canGoBack } = useNavigation();
+const Header = ({ title, pause }) => {
+    const { goBack } = useNavigation();
 
     return (
         <View style={styles.header}>
-            {showBack && canGoBack ? (
-                <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7}>
-                    <ArrowLeft size={20} color="#f4f4f5" />
+            <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.2}>
+                <ArrowLeft size={20} color="#f4f4f5" />
+            </TouchableOpacity>
+
+            <Text style={styles.title} numberOfLines={1}> {title} </Text>
+
+            {pause ?
+                <TouchableOpacity style={styles.backButton} activeOpacity={0.2} onPress={() => pause.setIsPaused(!pause.isPaused)}>
+                    {pause.isPaused ? <Play size={18} color="#f4f4f5" /> : <Pause size={18} color="#f4f4f5" />}
                 </TouchableOpacity>
-            ) : (
-                /* Empty view maintaining exact same spacing layout when back button is hidden */
+                :
                 <View style={styles.backButtonPlaceholder} />
-            )}
-            
-            <Text style={styles.title} numberOfLines={1}>
-                {title}
-            </Text>
-            
-            {/* Perfectly mirrors the left side to keep the title dead-center */}
-            <View style={styles.backButtonPlaceholder} />
+            }
         </View>
     );
 };
