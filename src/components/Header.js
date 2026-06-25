@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ArrowLeft } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 
@@ -8,65 +8,57 @@ const Header = ({ title, showBack = true }) => {
 
     return (
         <View style={styles.header}>
-            <View style={styles.buttonPlaceholder}>
-                {showBack && canGoBack && (
-                    <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7}>
-                        <ArrowLeft size={16} color="#a1a1aa" strokeWidth={2.5} />
-                        <Text style={styles.backText}> Back</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
+            {showBack && canGoBack ? (
+                <TouchableOpacity style={styles.backButton} onPress={goBack} activeOpacity={0.7}>
+                    <ArrowLeft size={20} color="#f4f4f5" />
+                </TouchableOpacity>
+            ) : (
+                /* Empty view maintaining exact same spacing layout when back button is hidden */
+                <View style={styles.backButtonPlaceholder} />
+            )}
+            
             <Text style={styles.title} numberOfLines={1}>
                 {title}
             </Text>
-            <View style={styles.buttonPlaceholder} />
+            
+            {/* Perfectly mirrors the left side to keep the title dead-center */}
+            <View style={styles.backButtonPlaceholder} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     header: {
-        height: Platform.OS === 'ios' ? 54 : 60,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        width: '100%',
         backgroundColor: '#09090b',
-        borderBottomWidth: 1,
-        borderBottomColor: '#27272a',
-        paddingHorizontal: 16,
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-    },
-    buttonPlaceholder: {
-        width: 75,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        paddingHorizontal: 20,
+        paddingTop: 12,
+        paddingBottom: 8,
     },
     backButton: {
-        flexDirection: 'row',
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 6,
-        paddingHorizontal: 10,
-        borderRadius: 8,
+        borderRadius: 12,
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
     },
-    backText: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        color: '#a1a1aa',
+    backButtonPlaceholder: {
+        width: 40,
+        height: 40,
     },
     title: {
-        flex: 1,
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: '800',
+        fontSize: 20,
+        fontWeight: '900',
         color: '#f4f4f5',
         letterSpacing: 0.5,
+        textAlign: 'center',
+        flex: 1,
     },
 });
 

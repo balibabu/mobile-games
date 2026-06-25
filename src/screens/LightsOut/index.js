@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { ArrowLeft, RotateCcw, Zap, Trophy, TrendingUp, Clock } from 'lucide-react-native';
-import { useNavigation } from '../../contexts/NavigationContext';
+import { RotateCcw, Zap, Trophy, TrendingUp, Clock } from 'lucide-react-native';
+import Header from '../../components/Header'; // Adjust this path to match your folder structure
 import { createBoard, toggleCell, isSolved, calculateTimeLimit } from './gameLogic';
 
 const CELL_SIZE = Math.floor((Dimensions.get('window').width - 80) / 5);
 
 export default function LightsOut() {
-    const { navigate } = useNavigation();
     const [level, setLevel] = useState(1);
     const [score, setScore] = useState(0);
     const [moves, setMoves] = useState(0);
@@ -114,13 +113,8 @@ export default function LightsOut() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigate('Home')} style={styles.backButton}>
-                    <ArrowLeft size={20} color="#f4f4f5" />
-                </TouchableOpacity>
-                <Text style={styles.title}>Lights Out</Text>
-                <View style={styles.backButton} />
-            </View>
+            {/* Unified Global Header Component */}
+            <Header title="Lights Out" />
 
             <View style={styles.statsContainer}>
                 <View style={styles.statItem}>
@@ -210,31 +204,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 16,
         paddingTop: 8,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        paddingHorizontal: 4,
-        paddingTop: 12,
-        paddingBottom: 8,
-    },
-    backButton: {
-        width: 40,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 12,
-        backgroundColor: '#18181b',
-        borderWidth: 1,
-        borderColor: '#27272a',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: '900',
-        color: '#f4f4f5',
-        letterSpacing: 0.5,
     },
     statsContainer: {
         flexDirection: 'row',

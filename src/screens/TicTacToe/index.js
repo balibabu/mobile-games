@@ -8,9 +8,9 @@ import { checkWinner, isBoardFull, getBestMove, getRandomMove } from './minimax'
 
 const TicTacToe = () => {
     const [board, setBoard] = useState(Array(9).fill(null));
-    const [isXTurn, setIsXTurn] = useState(true); // true = Human (X), false = Bot (O)
+    const [isXTurn, setIsXTurn] = useState(Math.random()<0.5); // true = Human (X), false = Bot (O)
     const [winner, setWinner] = useState(null);
-    const [difficulty, setDifficulty] = useState('Hard'); // 'Easy', 'Medium', 'Hard'
+    const [difficulty, setDifficulty] = useState('Medium'); // 'Easy', 'Medium', 'Hard'
 
     const handleCellPress = (index) => {
         if (board[index] || winner || !isXTurn) return;
@@ -94,7 +94,8 @@ const TicTacToe = () => {
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
             <StatusBar barStyle="light-content" backgroundColor="#09090b" />
-            <Header title="Tic-Tac-Toe" />
+            <Header title="Tic Tac Toe" />
+            
             <View style={styles.container}>
                 <Text style={styles.subtitle}>HUMAN (X) VS BOT (O)</Text>
 
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     },
     difficultyContainer: {
         flexDirection: 'row',
-        marginBottom: 24,
+        marginBottom: 30,
         borderRadius: 8,
         overflow: 'hidden',
         borderWidth: 1.5,

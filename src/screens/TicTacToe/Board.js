@@ -8,11 +8,12 @@ const Board = ({ board, onCellPress }) => {
     const renderCell = (index) => {
         const value = board[index];
         const isX = value === 'X';
+    
         const cellStyle = [
             styles.cell,
-            isX ? styles.cellX : value === 'O' ? styles.cellO : null
+            index % 3 !== 2 && styles.cellRightBorder,
         ];
-
+    
         return (
             <TouchableOpacity
                 key={index}
@@ -28,44 +29,35 @@ const Board = ({ board, onCellPress }) => {
     };
 
     return (
-        <View style={styles.boardContainer}>
-            <View style={styles.board}>
-                <View style={styles.row}>
-                    {renderCell(0)}
-                    {renderCell(1)}
-                    {renderCell(2)}
-                </View>
-                <View style={styles.row}>
-                    {renderCell(3)}
-                    {renderCell(4)}
-                    {renderCell(5)}
-                </View>
-                <View style={styles.row}>
-                    {renderCell(6)}
-                    {renderCell(7)}
-                    {renderCell(8)}
-                </View>
+        <View style={styles.board}>
+            <View style={styles.row}>
+                {renderCell(0)}
+                {renderCell(1)}
+                {renderCell(2)}
+            </View>
+
+            <View style={styles.row}>
+                {renderCell(3)}
+                {renderCell(4)}
+                {renderCell(5)}
+            </View>
+
+            <View style={styles.lastRow}>
+                {renderCell(6)}
+                {renderCell(7)}
+                {renderCell(8)}
             </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    boardContainer: {
-        borderRadius: 20,
-        backgroundColor: '#18181b',
-        padding: 12,
-        borderWidth: 1,
-        borderColor: '#27272a',
-        elevation: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.5,
-        shadowRadius: 10,
-        marginBottom: 30,
+    lastRow: {
+        flexDirection: 'row',
     },
     board: {
         overflow: 'hidden',
+        marginBottom: 30,
     },
     row: {
         flexDirection: 'row',
@@ -74,12 +66,8 @@ const styles = StyleSheet.create({
         width: CELL_SIZE,
         height: CELL_SIZE,
         backgroundColor: '#09090b',
-        borderWidth: 1.5,
-        borderColor: '#18181b',
-        borderRadius: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 4,
     },
     cellX: {
         borderColor: '#ef444433',
@@ -102,6 +90,15 @@ const styles = StyleSheet.create({
         textShadowColor: '#3b82f655',
         textShadowOffset: { width: 0, height: 0 },
         textShadowRadius: 8,
+    },
+    row: {
+        flexDirection: 'row',
+        borderBottomWidth: 4,
+        borderBottomColor: '#27272a',
+    },
+    cellRightBorder: {
+        borderRightWidth: 4,
+        borderRightColor: '#27272a',
     },
 });
 
