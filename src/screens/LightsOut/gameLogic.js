@@ -30,5 +30,5 @@ export function isSolved(board) {
 }
 
 export function calculateTimeLimit(level) {
-    return 300 + (level - 1) * 60;
+    return 60 + (level - 1) * 60;
 }
