@@ -16,7 +16,19 @@ const Controls = ({
 
             {/* Joystick/GamePad layout */}
             <View style={styles.gamePadRow}>
-                {/* D-PAD Left Side */}
+                {/* Drop Buttons Left Side */}
+                <View style={styles.actionButtonsContainer}>
+                    <TouchableOpacity
+                        style={[styles.actionButton, styles.hardDropBtn]}
+                        onPress={hardDrop}
+                        activeOpacity={0.7}
+                    >
+                        <ArrowBigDown size={24} color="#f4f4f5" strokeWidth={2.5} />
+                        <Text style={styles.actionButtonLabel}>HARD DROP</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* D-PAD Right Side */}
                 <View style={styles.dPad}>
                     <View style={styles.dPadRow}>
                         <View style={styles.dPadSpacer} />
@@ -52,18 +64,6 @@ const Controls = ({
                             <ArrowRight size={20} color={iconColor} strokeWidth={2.5} />
                         </TouchableOpacity>
                     </View>
-                </View>
-
-                {/* Drop Buttons Right Side */}
-                <View style={styles.actionButtonsContainer}>
-                    <TouchableOpacity
-                        style={[styles.actionButton, styles.hardDropBtn]}
-                        onPress={hardDrop}
-                        activeOpacity={0.7}
-                    >
-                        <ArrowBigDown size={24} color="#f4f4f5" strokeWidth={2.5} />
-                        <Text style={styles.actionButtonLabel}>HARD DROP</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -106,23 +106,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dPad: {
-        width: 160,
+        width: 180,
         alignItems: 'center',
     },
     dPadRow: {
         flexDirection: 'row',
     },
     dPadSpacer: {
-        width: 48,
-        height: 48,
+        width: 56,
+        height: 56,
     },
     dPadButton: {
-        width: 48,
-        height: 48,
+        width: 56,
+        height: 56,
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 24,
+        borderRadius: 28,
         justifyContent: 'center',
         alignItems: 'center',
         margin: 2,
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     },
     actionButtonsContainer: {
         flex: 1,
-        alignItems: 'flex-end',
-        paddingRight: 10,
+        alignItems: 'flex-start',
+        paddingLeft: 10,
     },
     actionButton: {
         backgroundColor: '#18181b',

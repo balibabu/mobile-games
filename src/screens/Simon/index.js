@@ -1,10 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Volume2, VolumeX } from 'lucide-react-native';
+import { Volume2, VolumeX, RotateCcw } from 'lucide-react-native';
+import Sound from 'react-native-sound';
 import Header from '../../components/Header';
 import ColorPads from './ColorPads';
-import { extendSequence, COLOR_MAP } from './gameLogic';
+import { extendSequence, COLOR_MAP, COLORS } from './gameLogic';
+
+const soundFiles = {
+    red: new Sound('red.mp3', Sound.MAIN_BUNDLE, (e) => { if (e) console.log('red sound error', e); }),
+    green: new Sound('green.mp3', Sound.MAIN_BUNDLE, (e) => { if (e) console.log('green sound error', e); }),
+    blue: new Sound('blue.mp3', Sound.MAIN_BUNDLE, (e) => { if (e) console.log('blue sound error', e); }),
+    yellow: new Sound('yellow.mp3', Sound.MAIN_BUNDLE, (e) => { if (e) console.log('yellow sound error', e); }),
+    wrong: new Sound('wrong.mp3', Sound.MAIN_BUNDLE, (e) => { if (e) console.log('wrong sound error', e); }),
+};
 
 const Simon = () => {
     const [sequence, setSequence] = useState([]);
@@ -14,17 +23,66 @@ const Simon = () => {
     const [gameState, setGameState] = useState('idle');
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
+    const [round, setRound] = useState(0);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const timeoutRefs = useRef([]);
+    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const shakeAnim = useRef(new Animated.Value(0)).current;
 
     const clearTimeouts = () => {
         timeoutRefs.current.forEach(clearTimeout);
         timeoutRefs.current = [];
     };
 
+    const playSound = useCallback((color) => {
+        if (!soundEnabled) return;
+        const sound = soundFiles[color];
+        if (sound) {
+            sound.stop(() => {
+                sound.play();
+            });
+        }
+    }, [soundEnabled]);
+
+    const playWrongSound = useCallback(() => {
+        if (!soundEnabled) return;
+        const sound = soundFiles.wrong;
+        if (sound) {
+            sound.stop(() => {
+                sound.play();
+            });
+        }
+    }, [soundEnabled]);
+
     useEffect(() => {
         return () => clearTimeouts();
     }, []);
+
+    useEffect(() => {
+        if (gameState === 'gameover') {
+            Animated.sequence([
+                Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
+            ]).start();
+        }
+    }, [gameState]);
+
+    useEffect(() => {
+        if (gameState === 'showing') {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(pulseAnim, { toValue: 1.08, duration: 600, useNativeDriver: true }),
+                    Animated.timing(pulseAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+                ]),
+                { iterations: -1 }
+            ).start();
+        } else {
+            pulseAnim.setValue(1);
+            pulseAnim.stopAnimation();
+        }
+    }, [gameState]);
 
     const playSequence = useCallback((seq) => {
         clearTimeouts();
@@ -34,6 +92,7 @@ const Simon = () => {
         seq.forEach((color, i) => {
             const showTimeout = setTimeout(() => {
                 setActiveColor(color);
+                playSound(color);
             }, i * 700 + 300);
 
             const hideTimeout = setTimeout(() => {
@@ -49,7 +108,7 @@ const Simon = () => {
         }, seq.length * 700 + 300);
 
         timeoutRefs.current.push(endTimeout);
-    }, []);
+    }, [playSound]);
 
     const startGame = () => {
         clearTimeouts();
@@ -57,6 +116,7 @@ const Simon = () => {
         setSequence(initial);
         setPlayerIndex(0);
         setScore(0);
+        setRound(1);
         setGameState('showing');
         playSequence(initial);
     };
@@ -65,10 +125,12 @@ const Simon = () => {
         if (gameState !== 'playing' || isPlayingSequence) return;
 
         setActiveColor(color);
+        playSound(color);
         setTimeout(() => setActiveColor(null), 200);
 
         if (color !== sequence[playerIndex]) {
             clearTimeouts();
+            playWrongSound();
             setGameState('gameover');
             setHighScore((prev) => Math.max(prev, score));
             setActiveColor(null);
@@ -81,6 +143,7 @@ const Simon = () => {
         if (nextIndex >= sequence.length) {
             const newScore = score + 1;
             setScore(newScore);
+            setRound(newScore + 1);
             const extended = extendSequence(sequence);
             setSequence(extended);
             setPlayerIndex(0);
@@ -90,17 +153,11 @@ const Simon = () => {
     };
 
     const getStatusText = () => {
-        if (gameState === 'idle') return 'Tap START to play!';
-        if (gameState === 'showing') return 'Watch the sequence...';
-        if (gameState === 'playing') return `Your turn! (${playerIndex + 1}/${sequence.length})`;
-        if (gameState === 'gameover') return 'Wrong! Game Over';
+        if (gameState === 'idle') return 'Ready to play?';
+        if (gameState === 'showing') return 'Watch closely...';
+        if (gameState === 'playing') return `Your turn  ${playerIndex + 1}/${sequence.length}`;
+        if (gameState === 'gameover') return 'Game Over';
         return '';
-    };
-
-    const getStatusStyle = () => {
-        if (gameState === 'gameover') return styles.statusLose;
-        if (gameState === 'playing') return styles.statusPlay;
-        return null;
     };
 
     return (
@@ -109,51 +166,64 @@ const Simon = () => {
             <Header title="Simon" />
             <View style={styles.container}>
                 <View style={styles.statsRow}>
-                    <View style={styles.statBox}>
+                    <View style={styles.statItem}>
                         <Text style={styles.statLabel}>SCORE</Text>
                         <Text style={styles.statValue}>{score}</Text>
                     </View>
-                    <View style={styles.statBox}>
-                        <Text style={styles.statLabel}>BEST</Text>
-                        <Text style={styles.statValue}>{highScore}</Text>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                        <Text style={styles.statLabel}>ROUND</Text>
+                        <Text style={styles.statValue}>{round}</Text>
                     </View>
-                    <View style={styles.statBox}>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                        <Text style={styles.statLabel}>BEST</Text>
+                        <Text style={[styles.statValue, styles.bestValue]}>{highScore}</Text>
+                    </View>
+                </View>
+
+                <Animated.View style={[styles.statusContainer, { transform: [{ translateX: shakeAnim }] }]}>
+                    <Text style={[styles.status, gameState === 'playing' && styles.statusPlay, gameState === 'gameover' && styles.statusLose, gameState === 'showing' && styles.statusWatch]}>
+                        {getStatusText()}
+                    </Text>
+                </Animated.View>
+
+                <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                    <ColorPads
+                        activeColor={activeColor}
+                        onPadPress={handlePadPress}
+                        disabled={gameState !== 'playing' || isPlayingSequence}
+                    />
+                </Animated.View>
+
+                <View style={styles.bottomSection}>
+                    {(gameState === 'idle' || gameState === 'gameover') && (
                         <TouchableOpacity
-                            style={styles.soundButton}
-                            onPress={() => setSoundEnabled(!soundEnabled)}
-                            activeOpacity={0.7}
+                            style={styles.startButton}
+                            onPress={startGame}
+                            activeOpacity={0.8}
                         >
-                            {soundEnabled
-                                ? <Volume2 size={16} color="#a1a1aa" strokeWidth={2} />
-                                : <VolumeX size={16} color="#71717a" strokeWidth={2} />
-                            }
-                            <Text style={styles.soundButtonText}>
-                                {soundEnabled ? 'ON' : 'OFF'}
+                            <RotateCcw size={16} color="#f4f4f5" strokeWidth={2.5} />
+                            <Text style={styles.startButtonText}>
+                                {gameState === 'idle' ? 'START GAME' : 'PLAY AGAIN'}
                             </Text>
                         </TouchableOpacity>
-                    </View>
+                    )}
+
+                    <TouchableOpacity
+                        style={styles.soundToggle}
+                        onPress={() => setSoundEnabled(!soundEnabled)}
+                        activeOpacity={0.7}
+                    >
+                        {soundEnabled
+                            ? <Volume2 size={18} color="#a855f7" strokeWidth={2} />
+                            : <VolumeX size={18} color="#52525b" strokeWidth={2} />
+                        }
+                        <Text style={[styles.soundToggleText, { color: soundEnabled ? '#c4b5fd' : '#52525b' }]}>
+                            Sound {soundEnabled ? 'On' : 'Off'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-                <View style={styles.statusContainer}>
-                    <Text style={[styles.status, getStatusStyle()]}>{getStatusText()}</Text>
-                </View>
-
-                <ColorPads
-                    activeColor={activeColor}
-                    onPadPress={handlePadPress}
-                    disabled={gameState !== 'playing' || isPlayingSequence}
-                />
-
-                <TouchableOpacity
-                    style={[styles.startButton, gameState !== 'idle' && gameState !== 'gameover' && styles.startButtonDisabled]}
-                    onPress={startGame}
-                    activeOpacity={0.7}
-                    disabled={gameState !== 'idle' && gameState !== 'gameover'}
-                >
-                    <Text style={styles.startButtonText}>
-                        {gameState === 'idle' ? 'START' : 'PLAY AGAIN'}
-                    </Text>
-                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
@@ -170,93 +240,119 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: 16,
+        paddingBottom: 20,
     },
     statsRow: {
         flexDirection: 'row',
-        width: '94%',
-        justifyContent: 'space-between',
+        width: '100%',
+        maxWidth: 340,
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         backgroundColor: '#18181b',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 8,
+        borderRadius: 20,
         borderWidth: 1,
         borderColor: '#27272a',
-        marginBottom: 20,
+        marginBottom: 28,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
     },
-    statBox: {
+    statItem: {
         alignItems: 'center',
         flex: 1,
     },
+    statDivider: {
+        width: 1,
+        height: 28,
+        backgroundColor: '#27272a',
+    },
     statLabel: {
         fontSize: 10,
-        fontWeight: '800',
+        fontWeight: '700',
         color: '#71717a',
-        letterSpacing: 1.5,
+        letterSpacing: 2,
     },
     statValue: {
-        fontSize: 17,
+        fontSize: 24,
         fontWeight: '900',
         color: '#f4f4f5',
         marginTop: 4,
+        fontVariant: ['tabular-nums'],
     },
-    soundButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#09090b',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#27272a',
-    },
-    soundButtonText: {
-        fontSize: 10,
-        fontWeight: '800',
-        color: '#a1a1aa',
-        marginLeft: 4,
-        letterSpacing: 1,
+    bestValue: {
+        color: '#fbbf24',
     },
     statusContainer: {
-        height: 50,
+        height: 36,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 24,
     },
     status: {
-        fontSize: 20,
-        fontWeight: '900',
-        color: '#f4f4f5',
-        letterSpacing: 0.5,
+        fontSize: 17,
+        fontWeight: '700',
+        color: '#a1a1aa',
+        letterSpacing: 0.3,
+    },
+    statusWatch: {
+        color: '#e2e8f0',
+        fontWeight: '800',
     },
     statusPlay: {
         color: '#a855f7',
+        fontWeight: '800',
     },
     statusLose: {
         color: '#ef4444',
+        fontWeight: '900',
+        fontSize: 19,
+    },
+    bottomSection: {
+        marginTop: 32,
+        alignItems: 'center',
+        gap: 16,
+        minHeight: 100,
+        justifyContent: 'center',
     },
     startButton: {
-        marginTop: 30,
-        backgroundColor: '#18181b',
-        borderWidth: 1.5,
-        borderColor: '#a855f744',
-        paddingHorizontal: 40,
-        paddingVertical: 14,
-        borderRadius: 12,
-        elevation: 2,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#a855f7',
+        paddingHorizontal: 32,
+        paddingVertical: 16,
+        borderRadius: 16,
+        elevation: 6,
         shadowColor: '#a855f7',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    startButtonDisabled: {
-        opacity: 0.4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
     },
     startButtonText: {
         color: '#f4f4f5',
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '800',
         letterSpacing: 1.5,
+    },
+    soundToggle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 12,
+        backgroundColor: '#18181b',
+        borderWidth: 1,
+        borderColor: '#27272a',
+    },
+    soundToggleText: {
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 0.5,
     },
 });
 
