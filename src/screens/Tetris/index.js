@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar } from 'react-native';
+import { View, StyleSheet, StatusBar, Dimensions } from 'react-native';
 import Header from '../../components/Header';
 import { BOARD_ROWS, BOARD_COLS, SHAPES, PIECES, useInterval } from './constants';
 import {
@@ -14,6 +14,8 @@ import StatsRow from './StatsRow';
 import GameBoard from './GameBoard';
 import Controls from './Controls';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const Tetris = () => {
     const [grid, setGrid] = useState(() =>
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 10,
+        paddingVertical: screenHeight * 0.012,
         backgroundColor: '#09090b',
     },
 });

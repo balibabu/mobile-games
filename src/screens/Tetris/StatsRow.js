@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { SHAPES } from './constants';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const StatsRow = ({ score, level, lines, nextPieceKey }) => {
     const nextPiece = SHAPES[nextPieceKey];
@@ -53,46 +55,46 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#18181b',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
+        paddingVertical: screenHeight * 0.015,
+        paddingHorizontal: screenWidth * 0.04,
         borderRadius: 16,
         borderWidth: 1,
         borderColor: '#27272a',
-        marginBottom: 10,
+        marginBottom: screenHeight * 0.012,
     },
     statBox: {
         alignItems: 'center',
         flex: 1,
     },
     statLabel: {
-        fontSize: 10,
+        fontSize: screenHeight * 0.012,
         fontWeight: '800',
         color: '#71717a',
         letterSpacing: 1.5,
     },
     statValue: {
-        fontSize: 17,
+        fontSize: screenHeight * 0.021,
         fontWeight: '900',
         color: '#f4f4f5',
-        marginTop: 4,
+        marginTop: screenHeight * 0.005,
     },
     nextPieceBox: {
         alignItems: 'center',
-        paddingLeft: 12,
+        paddingLeft: screenWidth * 0.03,
         borderLeftWidth: 1,
         borderLeftColor: '#27272a',
-        width: 80,
+        width: '20%',
     },
     nextPieceLabel: {
-        fontSize: 10,
+        fontSize: screenHeight * 0.012,
         fontWeight: '800',
         color: '#71717a',
         letterSpacing: 1.5,
-        marginBottom: 4,
+        marginBottom: screenHeight * 0.005,
     },
     nextPiecePreview: {
-        width: 44,
-        height: 44,
+        width: screenWidth * 0.11,
+        height: screenWidth * 0.11,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -100,9 +102,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     previewCell: {
-        width: 9,
-        height: 9,
-        margin: 1,
+        width: screenWidth * 0.023,
+        height: screenWidth * 0.023,
+        margin: screenWidth * 0.0025,
         borderWidth: 0.5,
         borderRadius: 2,
     },

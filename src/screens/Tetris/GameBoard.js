@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { BOARD_WIDTH, BOARD_HEIGHT, CELL_SIZE } from './constants';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { BOARD_WIDTH_PCT, BOARD_HEIGHT_PCT, CELL_WIDTH_PCT, CELL_HEIGHT_PCT } from './constants';
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 const GameBoard = ({ displayGrid, isPaused, gameOver, score, togglePause, resetGame }) => {
     return (
@@ -54,8 +56,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     board: {
-        width: BOARD_WIDTH,
-        height: BOARD_HEIGHT,
+        width: BOARD_WIDTH_PCT + '%',
+        aspectRatio: BOARD_COLS / BOARD_ROWS,
         backgroundColor: '#09090b',
         borderWidth: 4,
         borderColor: '#18181b',
@@ -70,10 +72,11 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
+        height: CELL_HEIGHT_PCT + '%',
     },
     cell: {
-        width: CELL_SIZE,
-        height: CELL_SIZE,
+        width: CELL_WIDTH_PCT + '%',
+        height: '100%',
         borderWidth: 0.5,
         borderRadius: 2,
     },
@@ -84,22 +87,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     overlayText: {
-        fontSize: 32,
+        fontSize: screenHeight * 0.04,
         fontWeight: '900',
         color: '#f4f4f5',
         letterSpacing: 2,
-        marginBottom: 10,
+        marginBottom: screenHeight * 0.012,
     },
     finalScoreText: {
-        fontSize: 18,
+        fontSize: screenHeight * 0.022,
         color: '#a1a1aa',
-        marginBottom: 20,
+        marginBottom: screenHeight * 0.025,
         fontWeight: '600',
     },
     overlayButton: {
         backgroundColor: '#3b82f6',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
+        paddingHorizontal: screenWidth * 0.06,
+        paddingVertical: screenHeight * 0.015,
         borderRadius: 10,
         elevation: 4,
         shadowColor: '#3b82f6',
@@ -110,7 +113,7 @@ const styles = StyleSheet.create({
     overlayButtonText: {
         color: '#fff',
         fontWeight: '800',
-        fontSize: 14,
+        fontSize: screenHeight * 0.018,
         letterSpacing: 1,
     },
 });

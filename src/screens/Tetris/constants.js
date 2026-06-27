@@ -17,15 +17,14 @@ export function useInterval(callback, delay) {
     }, [delay]);
 }
 
-const { height: screenHeight } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-// Responsive Board Sizing
 export const BOARD_ROWS = 20;
 export const BOARD_COLS = 10;
-const RAW_BOARD_HEIGHT = screenHeight * 0.5;
-export const CELL_SIZE = Math.floor(RAW_BOARD_HEIGHT / BOARD_ROWS);
-export const BOARD_WIDTH = (CELL_SIZE * BOARD_COLS) + 8;
-export const BOARD_HEIGHT = (CELL_SIZE * BOARD_ROWS) + 8;
+export const BOARD_WIDTH_PCT = 47;
+export const BOARD_HEIGHT_PCT = 50;
+export const CELL_WIDTH_PCT = (100 / BOARD_COLS);
+export const CELL_HEIGHT_PCT = (100 / BOARD_ROWS);
 
 export const SHAPES = {
     I: {

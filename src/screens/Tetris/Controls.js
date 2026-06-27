@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { RotateCw, ArrowLeft, ArrowDown, ArrowRight, ArrowBigDown } from 'lucide-react-native';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const Controls = ({
     rotate,
@@ -74,8 +76,8 @@ const styles = StyleSheet.create({
     controlsContainer: {
         width: '94%',
         alignItems: 'center',
-        paddingBottom: 5,
-        marginTop: 10,
+        paddingBottom: screenHeight * 0.006,
+        marginTop: screenHeight * 0.012,
     },
     gameActionsRow: {
         flexDirection: 'row',
@@ -106,26 +108,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dPad: {
-        width: 180,
+        width: '47%',
         alignItems: 'center',
     },
     dPadRow: {
         flexDirection: 'row',
     },
     dPadSpacer: {
-        width: 56,
-        height: 56,
+        width: '30%',
+        aspectRatio: 1,
     },
     dPadButton: {
-        width: 56,
-        height: 56,
+        width: '30%',
+        aspectRatio: 1,
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 28,
+        borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 2,
+        margin: screenWidth * 0.005,
         elevation: 3,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -138,15 +140,15 @@ const styles = StyleSheet.create({
     actionButtonsContainer: {
         flex: 1,
         alignItems: 'flex-start',
-        paddingLeft: 10,
+        paddingLeft: '2.5%',
     },
     actionButton: {
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
         borderRadius: 16,
-        paddingVertical: 14,
-        paddingHorizontal: 20,
+        paddingVertical: screenHeight * 0.017,
+        paddingHorizontal: screenWidth * 0.05,
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 3,
@@ -158,16 +160,16 @@ const styles = StyleSheet.create({
     hardDropBtn: {
         borderColor: '#3b82f644',
         borderWidth: 1.5,
-        width: 110,
+        width: '28%',
     },
     actionButtonText: {
         fontSize: 24,
     },
     actionButtonLabel: {
-        fontSize: 8,
+        fontSize: screenHeight * 0.01,
         fontWeight: '800',
         color: '#71717a',
-        marginTop: 4,
+        marginTop: screenHeight * 0.005,
         letterSpacing: 0.5,
     },
 });
