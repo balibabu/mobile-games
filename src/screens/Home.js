@@ -11,11 +11,11 @@ export default function Home() {
     const gamesList = [
         { id: 'Minesweeper', title: 'Minesweeper', description: "Avoid the mines and clear the board!", Icon: Bomb, backgroundColor: '#f59e0b' },
         { id: 'LightsOut', title: 'Lights Out', description: 'Turn off all the lights to advance!', Icon: Sun, backgroundColor: '#3b82f6' },
+        { id: 'TicTacToe', title: 'Tic Tac Toe', description: 'Face off against an unbeatable Minimax AI.', Icon: Hash, backgroundColor: '#ef4444' },
+        { id: 'Bantumi', title: 'Bantumi', description: 'Classic Mancala strategy. Capture gems!', Icon: Package, backgroundColor: '#8b5cf6' },
+        { id: 'Simon', title: 'Simon', description: 'Memorize and repeat the sequence.', Icon: Lightbulb, backgroundColor: '#a855f7' },
         { id: 'Tetris', title: 'Tetris', description: 'Retro block-dropping arcade action.', Icon: LayoutGrid, backgroundColor: '#10b981' },
         { id: 'PuyoPuyo', title: 'Puyo Puyo', description: 'Match 4+ same-colored puyos to pop them!', Icon: CircleDot, backgroundColor: '#ec4899' },
-        { id: 'TicTacToe', title: 'Tic Tac Toe', description: 'Face off against an unbeatable Minimax AI.', Icon: Hash, backgroundColor: '#ef4444' },
-        { id: 'Simon', title: 'Simon', description: 'Memorize and repeat the sequence.', Icon: Lightbulb, backgroundColor: '#a855f7' },
-        { id: 'Bantumi', title: 'Bantumi', description: 'Classic Mancala strategy. Capture gems!', Icon: Package, backgroundColor: '#8b5cf6' },
     ];
 
     return (
@@ -30,7 +30,7 @@ export default function Home() {
                         <Text style={styles.badgeText}>ARCADE</Text>
                     </View>
                 </View>
-                <Text style={styles.brandText}>MobGames</Text>
+                <Text style={styles.brandText}>Classic Games</Text>
                 <Text style={styles.subtitleText}>Choose a game below to start playing!</Text>
             </View>
 
