@@ -15,22 +15,17 @@ const Controls = ({
 
     return (
         <View style={styles.controlsContainer}>
-
-            {/* Joystick/GamePad layout */}
             <View style={styles.gamePadRow}>
-                {/* Drop Buttons Left Side */}
                 <View style={styles.actionButtonsContainer}>
                     <TouchableOpacity
                         style={[styles.actionButton, styles.hardDropBtn]}
                         onPress={hardDrop}
-                        activeOpacity={0.7}
+                        activeOpacity={0.5}
                     >
                         <ArrowBigDown size={24} color="#f4f4f5" strokeWidth={2.5} />
-                        <Text style={styles.actionButtonLabel}>HARD DROP</Text>
                     </TouchableOpacity>
                 </View>
 
-                {/* D-PAD Right Side */}
                 <View style={styles.dPad}>
                     <View style={styles.dPadRow}>
                         <View style={styles.dPadSpacer} />
@@ -74,10 +69,8 @@ const Controls = ({
 
 const styles = StyleSheet.create({
     controlsContainer: {
-        width: '94%',
+        width: '95%',
         alignItems: 'center',
-        paddingBottom: screenHeight * 0.006,
-        marginTop: screenHeight * 0.012,
     },
     gamePadRow: {
         flexDirection: 'row',
@@ -86,7 +79,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dPad: {
-        width: '47%',
+        width: '50%',
         alignItems: 'center',
     },
     dPadRow: {
@@ -102,7 +95,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 100,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
         margin: screenWidth * 0.005,
@@ -116,6 +109,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'flex-start',
         paddingLeft: '2.5%',
+        height:'60%',
     },
     actionButton: {
         backgroundColor: '#18181b',
@@ -135,7 +129,8 @@ const styles = StyleSheet.create({
     hardDropBtn: {
         borderColor: '#3b82f644',
         borderWidth: 1.5,
-        width: '28%',
+        width: '50%',
+        flex:1
     },
     actionButtonLabel: {
         fontSize: screenHeight * 0.01,

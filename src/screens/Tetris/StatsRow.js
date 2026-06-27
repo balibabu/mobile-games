@@ -51,16 +51,17 @@ const StatsRow = ({ score, level, lines, nextPieceKey }) => {
 const styles = StyleSheet.create({
     topStatsRow: {
         flexDirection: 'row',
-        width: '94%',
+        width: '90%',
+        height: '10%',
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#18181b',
-        paddingVertical: screenHeight * 0.015,
-        paddingHorizontal: screenWidth * 0.04,
-        borderRadius: 16,
+        // paddingVertical: screenHeight * 0.015,
+        // paddingHorizontal: screenWidth * 0.04,
+        borderRadius: 8,
         borderWidth: 1,
         borderColor: '#27272a',
-        marginBottom: screenHeight * 0.012,
+        // marginBottom: screenHeight * 0.012,
     },
     statBox: {
         alignItems: 'center',

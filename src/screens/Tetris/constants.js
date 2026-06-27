@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { Dimensions } from 'react-native';
 
 // Abramov's useInterval hook to prevent stale closures and handle game loop smoothly
 export function useInterval(callback, delay) {
@@ -17,12 +16,10 @@ export function useInterval(callback, delay) {
     }, [delay]);
 }
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
 export const BOARD_ROWS = 20;
 export const BOARD_COLS = 10;
-export const BOARD_WIDTH_PCT = 47;
-export const BOARD_HEIGHT_PCT = 50;
+export const BOARD_WIDTH_PCT = 60;
+export const BOARD_HEIGHT_PCT = 60;
 export const CELL_WIDTH_PCT = (100 / BOARD_COLS);
 export const CELL_HEIGHT_PCT = (100 / BOARD_ROWS);
 
