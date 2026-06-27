@@ -251,29 +251,35 @@ const styles = StyleSheet.create({
     dangerText: {
         color: '#ef4444',
     },
+    
+    // Fluid Grid Setup & Centering Layout
     boardContainer: {
-        flex: 1,
-        justifyContent: 'center',
+        flex: 1,                // Spans and occupies remaining vertical screen real estate
+        justifyContent: 'center', // Centers board vertically inside container
         alignItems: 'center',
         width: '100%',
+        paddingVertical: 12,
     },
     board: {
+        width: '100%',          
         borderWidth: 1,
         borderColor: '#27272a',
         borderRadius: 8,
         overflow: 'hidden',
         backgroundColor: '#18181b',
+        padding: 4,             // Adds a clean inner padding around the entire grid edge
+        gap: 4,                 // Vertical spacing between rows
     },
     row: {
         flexDirection: 'row',
+        width: '100%',
+        gap: 4,                 // Horizontal spacing between cells
     },
     cell: {
-        width: CELL_SIZE,
-        height: CELL_SIZE,
-        margin: 2,
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: '#27272a',
+        flex: 1,                
+        aspectRatio: 1,         
+        borderRadius: 4,        // Brings back the subtle rounded corner for individual lights
+        // Note: Removed the border entirely so the gap shows the dark background underneath smoothly
     },
     cellOn: {
         backgroundColor: '#facc15',

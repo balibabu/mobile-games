@@ -1,8 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = width > 500 ? 220 : (width - 56) / 2;
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const GameCard = ({ title, description, Icon, onPress, backgroundColor = '#3b82f6' }) => {
     return (
@@ -38,10 +35,8 @@ const GameCard = ({ title, description, Icon, onPress, backgroundColor = '#3b82f
 
 const styles = StyleSheet.create({
     card: {
-        width: CARD_WIDTH,
+        width: '100%',
         height: 190,
-        marginVertical: 8,
-        marginHorizontal: 8,
         borderRadius: 16,
         overflow: 'hidden',
         elevation: 6,
@@ -83,9 +78,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    emoji: {
-        fontSize: 22,
-    },
     textContainer: {
         flex: 1,
         justifyContent: 'flex-end',
@@ -117,6 +109,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         letterSpacing: 1.5,
     },
+    
 });
 
 export default GameCard;

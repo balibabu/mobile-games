@@ -61,10 +61,10 @@ const Simon = () => {
     useEffect(() => {
         if (gameState === 'gameover') {
             Animated.sequence([
-                Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-                Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
-                Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
-                Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: 10, duration: 500, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: -10, duration: 500, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: 10, duration: 500, useNativeDriver: true }),
+                Animated.timing(shakeAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
             ]).start();
         }
     }, [gameState]);
@@ -125,9 +125,8 @@ const Simon = () => {
         if (gameState !== 'playing' || isPlayingSequence) return;
 
         setActiveColor(color);
-        playSound(color);
         setTimeout(() => setActiveColor(null), 200);
-
+        
         if (color !== sequence[playerIndex]) {
             clearTimeouts();
             playWrongSound();
@@ -136,6 +135,7 @@ const Simon = () => {
             setActiveColor(null);
             return;
         }
+        playSound(color);
 
         const nextIndex = playerIndex + 1;
         setPlayerIndex(nextIndex);

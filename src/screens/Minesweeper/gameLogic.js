@@ -1,7 +1,7 @@
 export const DIFFICULTY = {
-    BEGINNER: { rows: 9, cols: 9, mines: 10 },
-    INTERMEDIATE: { rows: 12, cols: 10, mines: 22 },
-    EXPERT: { rows: 15, cols: 11, mines: 40 },
+    BEGINNER: { rows: 8, cols: 8, mines: 10 },
+    INTERMEDIATE: { rows: 12, cols: 9, mines: 22 },
+    EXPERT: { rows: 16, cols: 10, mines: 40 },
 };
 
 export function createBoard(rows, cols, mineCount) {

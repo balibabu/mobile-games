@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Gem, Package } from 'lucide-react-native';
+import { Gamepad2, Rocket, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Package } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -9,55 +9,13 @@ export default function Home() {
     const { navigate } = useNavigation();
 
     const gamesList = [
-        {
-            id: 'TicTacToe',
-            title: 'Tic Tac Toe',
-            description: 'Face off against an unbeatable Minimax AI bot. Can you get a draw or win?',
-            Icon: Hash,
-            backgroundColor: '#ef4444',
-        },
-        {
-            id: 'Tetris',
-            title: 'Tetris',
-            description: 'Retro block-dropping arcade action. Rotate, drop, and clear lines!',
-            Icon: LayoutGrid,
-            backgroundColor: '#10b981',
-        },
-        {
-            id: 'Simon',
-            title: 'Simon',
-            description: 'Memorize and repeat the growing color sequence. How far can you go?',
-            Icon: Lightbulb,
-            backgroundColor: '#a855f7',
-        },
-        {
-            id: 'Minesweeper',
-            title: 'Minesweeper',
-            description: "Avoid the mines and clear the board! Flag suspicious cells and test your logic.",
-            Icon: Bomb,
-            backgroundColor: '#f59e0b',
-        },
-        {
-            id: 'LightsOut',
-            title: 'Lights Out',
-            description: 'Turn off all the lights to advance! Click cells to toggle the light and its neighbors.',
-            Icon: Sun,
-            backgroundColor: '#3b82f6',
-        },
-        {
-            id: 'PuyoPuyo',
-            title: 'Puyo Puyo',
-            description: 'Match 4+ same-colored puyos to pop them! Build chains for big points as speed increases.',
-            Icon: CircleDot,
-            backgroundColor: '#ec4899',
-        },
-        {
-            id: 'Bantumi',
-            title: 'Bantumi',
-            description: 'Classic Mancala strategy. Capture gems and outsmart the bot!',
-            Icon: Package,
-            backgroundColor: '#8b5cf6',
-        },
+        { id: 'Minesweeper', title: 'Minesweeper', description: "Avoid the mines and clear the board!", Icon: Bomb, backgroundColor: '#f59e0b' },
+        { id: 'LightsOut', title: 'Lights Out', description: 'Turn off all the lights to advance!', Icon: Sun, backgroundColor: '#3b82f6' },
+        { id: 'Tetris', title: 'Tetris', description: 'Retro block-dropping arcade action.', Icon: LayoutGrid, backgroundColor: '#10b981' },
+        { id: 'PuyoPuyo', title: 'Puyo Puyo', description: 'Match 4+ same-colored puyos to pop them!', Icon: CircleDot, backgroundColor: '#ec4899' },
+        { id: 'TicTacToe', title: 'Tic Tac Toe', description: 'Face off against an unbeatable Minimax AI.', Icon: Hash, backgroundColor: '#ef4444' },
+        { id: 'Simon', title: 'Simon', description: 'Memorize and repeat the sequence.', Icon: Lightbulb, backgroundColor: '#a855f7' },
+        { id: 'Bantumi', title: 'Bantumi', description: 'Classic Mancala strategy. Capture gems!', Icon: Package, backgroundColor: '#8b5cf6' },
     ];
 
     return (
@@ -81,14 +39,15 @@ export default function Home() {
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.gridContainer}>
                     {gamesList.map((game) => (
-                        <GameCard
-                            key={game.id}
-                            title={game.title}
-                            description={game.description}
-                            Icon={game.Icon}
-                            backgroundColor={game.backgroundColor}
-                            onPress={() => navigate(game.id)}
-                        />
+                        <View key={game.id} style={styles.cardWrapper}>
+                            <GameCard
+                                title={game.title}
+                                description={game.description}
+                                Icon={game.Icon}
+                                backgroundColor={game.backgroundColor}
+                                onPress={() => navigate(game.id)}
+                            />
+                        </View>
                     ))}
                 </View>
             </ScrollView>
@@ -165,16 +124,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 24,
         marginBottom: 8,
     },
-    scrollContent: {
-        paddingHorizontal: 12,
-        paddingTop: 8,
-        paddingBottom: 30,
-    },
-    gridContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'flex-start',
-    },
     footer: {
         padding: 16,
         alignItems: 'center',
@@ -190,5 +139,19 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#52525b',
         fontWeight: '600',
+    },
+    scrollContent: {
+        paddingHorizontal: 16,
+        paddingTop: 8,
+        paddingBottom: 30,
+    },
+    gridContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between', 
+        rowGap: 14,                    
+    },
+    cardWrapper: {
+        width: '48%', 
     },
 });
