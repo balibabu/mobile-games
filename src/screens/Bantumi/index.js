@@ -21,9 +21,6 @@ import {
   findBestMove,
   getValidMoves,
   isPlayerPit,
-  isBotPit,
-  isPlayerStore,
-  isBotStore,
 } from './gameLogic';
 
 function computeSowSteps(pits, pitIndex) {
@@ -57,13 +54,13 @@ function Pit({ gems, index, pitSize, isPlayer, disabled, onPress, highlight }) {
     if (highlight && !prevHighlight.current) {
       Animated.sequence([
         Animated.timing(scaleAnim, {
-          toValue: 1.3,
-          duration: 60,
+          toValue: 1.5,
+          duration: 200,
           useNativeDriver: true,
         }),
         Animated.timing(scaleAnim, {
           toValue: 1,
-          duration: 60,
+          duration: 200,
           useNativeDriver: true,
         }),
       ]).start();
@@ -73,7 +70,7 @@ function Pit({ gems, index, pitSize, isPlayer, disabled, onPress, highlight }) {
 
   return (
     <TouchableOpacity
-      activeOpacity={0.7}
+      activeOpacity={0.5}
       disabled={disabled || isEmpty}
       onPress={() => onPress(index)}
       style={[
@@ -81,7 +78,7 @@ function Pit({ gems, index, pitSize, isPlayer, disabled, onPress, highlight }) {
         {
           width: pitSize,
           height: pitSize,
-          opacity: isEmpty ? 0.35 : 1,
+          opacity: isEmpty ? 0.3 : 1,
           backgroundColor: !isPlayer ? '#111111' : undefined,
         },
       ]}
@@ -110,13 +107,13 @@ function Store({ gems, label, width, height, isPlayer, highlight }) {
     if (highlight && !prevHighlight.current) {
       Animated.sequence([
         Animated.timing(scaleAnim, {
-          toValue: 1.2,
-          duration: 60,
+          toValue: 3,
+          duration: 500,
           useNativeDriver: true,
         }),
         Animated.timing(scaleAnim, {
           toValue: 1,
-          duration: 60,
+          duration: 500,
           useNativeDriver: true,
         }),
       ]).start();
@@ -144,26 +141,6 @@ function Store({ gems, label, width, height, isPlayer, highlight }) {
       >
         {gems}
       </Animated.Text>
-    </View>
-  );
-}
-
-function StatsRow({ playerStore, botStore, isBotTurn }) {
-  return (
-    <View style={styles.statsRow}>
-      <View style={styles.statBox}>
-        <Text style={styles.statLabel}>Your Store</Text>
-        <Text style={styles.statValue}>{playerStore}</Text>
-      </View>
-      <View style={styles.statBox}>
-        <Text style={styles.statLabel}>
-          {isBotTurn ? 'Bot Turn' : 'Your Turn'}
-        </Text>
-      </View>
-      <View style={styles.statBox}>
-        <Text style={styles.statLabel}>Bot Store</Text>
-        <Text style={styles.statValue}>{botStore}</Text>
-      </View>
     </View>
   );
 }
@@ -319,11 +296,11 @@ export default function Bantumi() {
       const t = setTimeout(() => {
         setPits(step.pits);
         setHighlightPit(step.highlight);
-      }, idx * 120);
+      }, idx * 400);
       timeoutsRef.current.push(t);
     });
 
-    const afterSowDelay = sowSteps.length * 120 + 80;
+    const afterSowDelay = sowSteps.length * 400 +500;
 
     const afterT = setTimeout(() => {
       setHighlightPit(-1);
@@ -375,7 +352,7 @@ export default function Bantumi() {
     if (isBotTurn && !gameOver && !animating) {
       const timer = setTimeout(() => {
         handleBotMove(pits);
-      }, 600);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [isBotTurn, gameOver, animating, pits, handleBotMove]);
@@ -400,12 +377,6 @@ export default function Bantumi() {
         <Text style={styles.headerTitle}>Bantumi</Text>
         <View style={styles.backBtn} />
       </View>
-
-      <StatsRow
-        playerStore={pits[6]}
-        botStore={pits[13]}
-        isBotTurn={isBotTurn}
-      />
 
       <View style={styles.boardWrap}>
         <GameBoard

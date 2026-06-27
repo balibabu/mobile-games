@@ -229,7 +229,7 @@ const PuyoPuyo = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#09090b" />
-            <Header title="Puyo Puyo" />
+            <Header title="Puyo Puyo" pause={{ isPaused, setIsPaused }} />
             <View style={styles.container}>
                 <StatsRow score={score} level={level} chains={totalChains} nextPair={nextPairColors} />
                 <GameBoard
@@ -243,10 +243,6 @@ const PuyoPuyo = () => {
                     resetGame={resetGame}
                 />
                 <Controls
-                    isPaused={isPaused}
-                    gameOver={gameOver}
-                    togglePause={() => setIsPaused(!isPaused)}
-                    resetGame={resetGame}
                     rotate={rotate}
                     moveLeft={moveLeft}
                     moveDown={tryMoveDown}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Users, Brain, RotateCcw } from 'lucide-react-native';
+import { Users, RotateCcw, Cpu } from 'lucide-react-native';
 import Header from '../../components/Header';
 import Board from './Board';
 import { checkWinner, isBoardFull, getBestMove, getRandomMove } from './minimax';
@@ -98,7 +98,7 @@ const TicTacToe = () => {
                             onPress={() => toggleGameMode('bot')}
                             activeOpacity={0.7}
                         >
-                            <Brain
+                            <Cpu
                                 size={20}
                                 color={gameMode === 'bot' ? '#f4f4f5' : '#71717a'}
                                 strokeWidth={2.5}
