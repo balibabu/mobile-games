@@ -306,12 +306,56 @@ export default function Bantumi() {
             setHighlightPit(-1);
             setPits(newPits);
 
+            // 2. Check for game over and animate the sweep
             if (isGameOver(newPits)) {
-                const finalPits = finalizeGame(newPits);
-                setPits(finalPits);
-                setGameOver(true);
-                setWinner(getWinner(finalPits));
-                setAnimating(false);
+                const finalSteps = [];
+                const finalWorking = [...newPits];
+
+                // Sweep Player side
+                for (let i = 0; i < 6; i++) {
+                    if (finalWorking[i] > 0) {
+                        finalWorking[6] += finalWorking[i];
+                        finalWorking[i] = 0;
+                        finalSteps.push({ pits: [...finalWorking], highlight: i });
+                    }
+                }
+                
+                // Sweep Bot side
+                for (let i = 7; i < 13; i++) {
+                    if (finalWorking[i] > 0) {
+                        finalWorking[13] += finalWorking[i];
+                        finalWorking[i] = 0;
+                        finalSteps.push({ pits: [...finalWorking], highlight: i });
+                    }
+                }
+
+                if (finalSteps.length > 0) {
+                    finalSteps.forEach((step, idx) => {
+                        const sweepTimer = setTimeout(() => {
+                            setPits(step.pits);
+                            setHighlightPit(step.highlight);
+                        }, idx * 300); // Slightly faster animation for the final sweep
+                        timeoutsRef.current.push(sweepTimer);
+                    });
+
+                    const finalSweepDelay = finalSteps.length * 300 + 500;
+                    
+                    const finalGameTimer = setTimeout(() => {
+                        setHighlightPit(-1);
+                        const finalPits = finalizeGame(newPits); 
+                        setPits(finalPits);
+                        setGameOver(true);
+                        setWinner(getWinner(finalPits));
+                        setAnimating(false);
+                    }, finalSweepDelay);
+                    timeoutsRef.current.push(finalGameTimer);
+                } else {
+                    const finalPits = finalizeGame(newPits);
+                    setPits(finalPits);
+                    setGameOver(true);
+                    setWinner(getWinner(finalPits));
+                    setAnimating(false);
+                }
                 return;
             }
 
