@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { BOARD_WIDTH_PCT, BOARD_HEIGHT_PCT, CELL_WIDTH_PCT, CELL_HEIGHT_PCT } from './constants';
+import { BOARD_WIDTH_PCT, CELL_WIDTH_PCT, CELL_HEIGHT_PCT, BOARD_COLS, BOARD_ROWS } from './constants';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 

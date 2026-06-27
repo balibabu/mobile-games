@@ -79,28 +79,6 @@ const styles = StyleSheet.create({
         paddingBottom: screenHeight * 0.006,
         marginTop: screenHeight * 0.012,
     },
-    gameActionsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 15,
-    },
-    gameActionButton: {
-        backgroundColor: '#18181b',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-        flex: 0.48,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#27272a',
-    },
-    gameActionButtonText: {
-        color: '#f4f4f5',
-        fontWeight: '800',
-        fontSize: 12,
-        letterSpacing: 1.5,
-    },
     gamePadRow: {
         flexDirection: 'row',
         width: '100%',
@@ -134,9 +112,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
     },
-    dPadArrow: {
-        fontSize: 18,
-    },
     actionButtonsContainer: {
         flex: 1,
         alignItems: 'flex-start',
@@ -161,9 +136,6 @@ const styles = StyleSheet.create({
         borderColor: '#3b82f644',
         borderWidth: 1.5,
         width: '28%',
-    },
-    actionButtonText: {
-        fontSize: 24,
     },
     actionButtonLabel: {
         fontSize: screenHeight * 0.01,
