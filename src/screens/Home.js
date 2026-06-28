@@ -51,13 +51,6 @@ export default function Home() {
                     ))}
                 </View>
             </ScrollView>
-
-            <View style={styles.footer}>
-                <View style={styles.footerContent}>
-                    <Rocket size={14} color="#52525b" strokeWidth={2} />
-                    <Text style={styles.footerText}> More games coming soon!</Text>
-                </View>
-            </View>
         </SafeAreaView>
     );
 };
@@ -123,22 +116,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#18181b',
         marginHorizontal: 24,
         marginBottom: 8,
-    },
-    footer: {
-        padding: 16,
-        alignItems: 'center',
-        borderTopWidth: 1,
-        borderTopColor: '#18181b',
-        backgroundColor: '#09090b',
-    },
-    footerContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    footerText: {
-        fontSize: 13,
-        color: '#52525b',
-        fontWeight: '600',
     },
     scrollContent: {
         paddingHorizontal: 16,

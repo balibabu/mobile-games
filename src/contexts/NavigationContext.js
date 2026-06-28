@@ -46,8 +46,8 @@ export const NavigationProvider = ({ children }) => {
         });
     };
 
-    const goBack = (force = false) => {
-        if (!force && currentScreen !== 'Home') {
+    const goBack = () => {
+        if (currentScreen !== 'Home') {
             Alert.alert(
                 'Leave Game?',
                 'Are you sure you want to leave the game? Your current progress will be lost.',
