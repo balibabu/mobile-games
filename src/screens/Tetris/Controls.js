@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { RotateCw, ArrowLeft, ArrowDown, ArrowRight, ArrowBigDown } from 'lucide-react-native';
-
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const Controls = ({
     rotate,
@@ -71,6 +69,7 @@ const styles = StyleSheet.create({
     controlsContainer: {
         width: '95%',
         alignItems: 'center',
+        paddingVertical: '1%',
     },
     gamePadRow: {
         flexDirection: 'row',
@@ -95,49 +94,42 @@ const styles = StyleSheet.create({
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 16,
+        borderRadius: '10%',
         justifyContent: 'center',
         alignItems: 'center',
-        margin: screenWidth * 0.005,
+        margin: '2%',
         elevation: 3,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: '2%' },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: '3%',
     },
     actionButtonsContainer: {
         flex: 1,
         alignItems: 'flex-start',
         paddingLeft: '2.5%',
-        height:'60%',
+        height: '60%',
     },
     actionButton: {
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 16,
-        paddingVertical: screenHeight * 0.017,
-        paddingHorizontal: screenWidth * 0.05,
+        borderRadius: '10%',
+        paddingVertical: '4%',
+        paddingHorizontal: '10%',
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 3,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: '2%' },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: '3%',
     },
     hardDropBtn: {
         borderColor: '#3b82f644',
         borderWidth: 1.5,
         width: '50%',
-        flex:1
-    },
-    actionButtonLabel: {
-        fontSize: screenHeight * 0.01,
-        fontWeight: '800',
-        color: '#71717a',
-        marginTop: screenHeight * 0.005,
-        letterSpacing: 0.5,
+        flex: 1,
     },
 });
 

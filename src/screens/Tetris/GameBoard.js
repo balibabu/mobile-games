@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { BOARD_WIDTH_PCT, CELL_WIDTH_PCT, CELL_HEIGHT_PCT, BOARD_COLS, BOARD_ROWS } from './constants';
+import { BOARD_COLS, BOARD_ROWS, CELL_WIDTH_PCT, CELL_HEIGHT_PCT } from './constants';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -52,23 +52,24 @@ const GameBoard = ({ displayGrid, isPaused, gameOver, score, togglePause, resetG
 
 const styles = StyleSheet.create({
     gameContainer: {
+        width: '65%',
         alignItems: 'center',
         justifyContent: 'center',
     },
     board: {
-        width: BOARD_WIDTH_PCT + '%',
+        width: '100%',
         aspectRatio: BOARD_COLS / BOARD_ROWS,
         backgroundColor: '#09090b',
-        borderWidth: 4,
+        borderWidth: screenWidth * 0.01,
         borderColor: '#18181b',
-        borderRadius: 8,
+        borderRadius: screenWidth * 0.02,
         overflow: 'hidden',
         position: 'relative',
         elevation: 8,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: screenWidth * 0.01 },
         shadowOpacity: 0.5,
-        shadowRadius: 8,
+        shadowRadius: screenWidth * 0.02,
     },
     row: {
         flexDirection: 'row',
@@ -101,14 +102,14 @@ const styles = StyleSheet.create({
     },
     overlayButton: {
         backgroundColor: '#3b82f6',
-        paddingHorizontal: screenWidth * 0.06,
-        paddingVertical: screenHeight * 0.015,
-        borderRadius: 10,
+        paddingHorizontal: '15%',
+        paddingVertical: '4%',
+        borderRadius: screenWidth * 0.025,
         elevation: 4,
         shadowColor: '#3b82f6',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: screenWidth * 0.005 },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowRadius: screenWidth * 0.01,
     },
     overlayButtonText: {
         color: '#fff',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Dimensions } from 'react-native';
+import { View, StyleSheet, StatusBar } from 'react-native';
 import Header from '../../components/Header';
 import { BOARD_ROWS, BOARD_COLS, SHAPES, PIECES, useInterval } from './constants';
 import {
@@ -10,12 +10,10 @@ import {
     getScoreAddition,
     rotateMatrix
 } from './gameLogic';
-import StatsRow from './StatsRow';
+import StatsPanel from './StatsPanel';
 import GameBoard from './GameBoard';
 import Controls from './Controls';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-const { height: screenHeight } = Dimensions.get('window');
 
 const Tetris = () => {
     const [grid, setGrid] = useState(() =>
@@ -164,8 +162,7 @@ const Tetris = () => {
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#09090b" />
             <Header title="Tetris Arcade" pause={{ isPaused, setIsPaused }} />
-            <View style={styles.container}>
-                <StatsRow score={score} level={level} lines={lines} nextPieceKey={nextPieceKey} />
+            <View style={styles.gameArea}>
                 <GameBoard
                     displayGrid={displayGrid}
                     isPaused={isPaused}
@@ -174,14 +171,15 @@ const Tetris = () => {
                     togglePause={() => setIsPaused(!isPaused)}
                     resetGame={resetGame}
                 />
-                <Controls
-                    rotate={rotate}
-                    moveLeft={moveLeft}
-                    moveDown={moveDown}
-                    moveRight={moveRight}
-                    hardDrop={hardDrop}
-                />
+                <StatsPanel score={score} level={level} lines={lines} nextPieceKey={nextPieceKey} />
             </View>
+            <Controls
+                rotate={rotate}
+                moveLeft={moveLeft}
+                moveDown={moveDown}
+                moveRight={moveRight}
+                hardDrop={hardDrop}
+            />
         </SafeAreaView>
     );
 };
@@ -191,11 +189,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#09090b',
     },
-    container: {
+    gameArea: {
         flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: screenHeight * 0.012,
+        justifyContent: 'center',
+        paddingHorizontal: '2%',
+        paddingVertical: '1%',
         backgroundColor: '#09090b',
     },
 });

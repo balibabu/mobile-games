@@ -18,8 +18,6 @@ export function useInterval(callback, delay) {
 
 export const BOARD_ROWS = 20;
 export const BOARD_COLS = 10;
-export const BOARD_WIDTH_PCT = 60;
-export const BOARD_HEIGHT_PCT = 60;
 export const CELL_WIDTH_PCT = (100 / BOARD_COLS);
 export const CELL_HEIGHT_PCT = (100 / BOARD_ROWS);
 
