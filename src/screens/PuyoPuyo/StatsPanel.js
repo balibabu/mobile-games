@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { COLOR_MAP } from './constants';
 
-const StatsRow = ({ score, level, chains, nextPair }) => {
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+const StatsPanel = ({ score, level, chains, nextPair }) => {
     return (
-        <View style={styles.topStatsRow}>
+        <View style={styles.panel}>
             <View style={styles.statBox}>
                 <Text style={styles.statLabel}>SCORE</Text>
                 <Text style={styles.statValue}>{score}</Text>
@@ -43,60 +45,62 @@ const StatsRow = ({ score, level, chains, nextPair }) => {
 };
 
 const styles = StyleSheet.create({
-    topStatsRow: {
-        flexDirection: 'row',
-        width: '94%',
-        justifyContent: 'space-between',
+    panel: {
+        width: '28%',
+        height: '80%',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         backgroundColor: '#18181b',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 16,
+        borderRadius: screenWidth * 0.02,
         borderWidth: 1,
         borderColor: '#27272a',
-        marginBottom: 10,
+        marginLeft: '2%',
+        paddingVertical: '3%',
     },
     statBox: {
         alignItems: 'center',
-        flex: 1,
+        width: '100%',
+        paddingVertical: '2%',
     },
     statLabel: {
-        fontSize: 10,
+        fontSize: screenWidth * 0.028,
         fontWeight: '800',
         color: '#71717a',
         letterSpacing: 1.5,
     },
     statValue: {
-        fontSize: 17,
+        fontSize: screenWidth * 0.045,
         fontWeight: '900',
         color: '#f4f4f5',
-        marginTop: 4,
+        marginTop: screenHeight * 0.005,
     },
     nextPieceBox: {
         alignItems: 'center',
-        paddingLeft: 12,
-        borderLeftWidth: 1,
-        borderLeftColor: '#27272a',
-        width: 60,
+        width: '100%',
+        borderTopWidth: 1,
+        borderTopColor: '#27272a',
+        paddingTop: '3%',
     },
     nextPieceLabel: {
-        fontSize: 10,
+        fontSize: screenWidth * 0.028,
         fontWeight: '800',
         color: '#71717a',
         letterSpacing: 1.5,
-        marginBottom: 4,
+        marginBottom: screenHeight * 0.005,
     },
     nextPiecePreview: {
-        flexDirection: 'column',
+        width: '70%',
+        aspectRatio: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     previewCell: {
-        width: 16,
-        height: 16,
-        margin: 1,
+        width: '40%',
+        aspectRatio: 1,
+        margin: '2%',
         borderWidth: 0.5,
-        borderRadius: 4,
+        borderRadius: screenWidth * 0.01,
     },
 });
 
-export default StatsRow;
+export default StatsPanel;

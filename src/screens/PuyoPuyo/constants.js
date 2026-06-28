@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { Dimensions } from 'react-native';
 
 export function useInterval(callback, delay) {
     const savedCallback = useRef();
@@ -16,14 +15,10 @@ export function useInterval(callback, delay) {
     }, [delay]);
 }
 
-const { height: screenHeight } = Dimensions.get('window');
-
 export const BOARD_ROWS = 12;
 export const BOARD_COLS = 6;
-const RAW_BOARD_HEIGHT = screenHeight * 0.5;
-export const CELL_SIZE = Math.floor(RAW_BOARD_HEIGHT / BOARD_ROWS);
-export const BOARD_WIDTH = CELL_SIZE * BOARD_COLS + 8;
-export const BOARD_HEIGHT = CELL_SIZE * BOARD_ROWS + 8;
+export const CELL_WIDTH_PCT = (100 / BOARD_COLS);
+export const CELL_HEIGHT_PCT = (100 / BOARD_ROWS);
 export const MIN_CHAIN = 4;
 
 export const PUYO_COLORS = ['#ef4444', '#22c55e', '#3b82f6', '#eab308', '#a855f7'];

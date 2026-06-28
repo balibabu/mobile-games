@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { BOARD_WIDTH, BOARD_HEIGHT, CELL_SIZE, COLOR_MAP } from './constants';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { BOARD_COLS, BOARD_ROWS, CELL_WIDTH_PCT, CELL_HEIGHT_PCT, COLOR_MAP } from './constants';
 
-const GameBoard = ({ displayGrid, currentPair, isPaused, gameOver, score, chainPop, togglePause, resetGame }) => {
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
+
+const GameBoard = ({ displayGrid, isPaused, gameOver, score, togglePause, resetGame }) => {
     return (
         <View style={styles.gameContainer}>
             <View style={styles.board}>
@@ -18,18 +20,10 @@ const GameBoard = ({ displayGrid, currentPair, isPaused, gameOver, score, chainP
                                         borderColor: cellColor ? 'rgba(255, 255, 255, 0.25)' : '#111115',
                                     },
                                 ]}
-                            >
-                                {cellColor ? <View style={styles.cellHighlight} /> : null}
-                            </View>
+                            />
                         ))}
                     </View>
                 ))}
-
-                {chainPop > 0 && !isPaused && !gameOver && (
-                    <View style={styles.chainOverlay}>
-                        <Text style={styles.chainText}>{chainPop}x CHAIN!</Text>
-                    </View>
-                )}
 
                 {isPaused && !gameOver && (
                     <View style={styles.overlay}>
@@ -56,55 +50,34 @@ const GameBoard = ({ displayGrid, currentPair, isPaused, gameOver, score, chainP
 
 const styles = StyleSheet.create({
     gameContainer: {
+        width: '65%',
         alignItems: 'center',
         justifyContent: 'center',
     },
     board: {
-        width: BOARD_WIDTH,
-        height: BOARD_HEIGHT,
+        width: '100%',
+        aspectRatio: BOARD_COLS / BOARD_ROWS,
         backgroundColor: '#09090b',
-        borderWidth: 4,
+        borderWidth: screenWidth * 0.01,
         borderColor: '#18181b',
-        borderRadius: 16,
+        borderRadius: screenWidth * 0.02,
         overflow: 'hidden',
         position: 'relative',
         elevation: 8,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: screenWidth * 0.01 },
         shadowOpacity: 0.5,
-        shadowRadius: 8,
+        shadowRadius: screenWidth * 0.02,
     },
     row: {
         flexDirection: 'row',
+        height: CELL_HEIGHT_PCT + '%',
     },
     cell: {
-        width: CELL_SIZE,
-        height: CELL_SIZE,
+        width: CELL_WIDTH_PCT + '%',
+        height: '100%',
         borderWidth: 0.5,
-        borderRadius: 4,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    cellHighlight: {
-        width: CELL_SIZE * 0.35,
-        height: CELL_SIZE * 0.35,
-        borderRadius: CELL_SIZE * 0.2,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        position: 'absolute',
-        top: CELL_SIZE * 0.15,
-        left: CELL_SIZE * 0.15,
-    },
-    chainOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(9, 9, 11, 0.6)',
-    },
-    chainText: {
-        fontSize: 28,
-        fontWeight: '900',
-        color: '#eab308',
-        letterSpacing: 2,
+        borderRadius: screenWidth * 0.005,
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
@@ -113,33 +86,33 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     overlayText: {
-        fontSize: 32,
+        fontSize: screenHeight * 0.04,
         fontWeight: '900',
         color: '#f4f4f5',
         letterSpacing: 2,
-        marginBottom: 10,
+        marginBottom: screenHeight * 0.012,
     },
     finalScoreText: {
-        fontSize: 18,
+        fontSize: screenHeight * 0.022,
         color: '#a1a1aa',
-        marginBottom: 20,
+        marginBottom: screenHeight * 0.025,
         fontWeight: '600',
     },
     overlayButton: {
         backgroundColor: '#3b82f6',
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 10,
+        paddingHorizontal: '15%',
+        paddingVertical: '4%',
+        borderRadius: screenWidth * 0.025,
         elevation: 4,
         shadowColor: '#3b82f6',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: screenWidth * 0.005 },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowRadius: screenWidth * 0.01,
     },
     overlayButtonText: {
         color: '#fff',
         fontWeight: '800',
-        fontSize: 14,
+        fontSize: screenHeight * 0.018,
         letterSpacing: 1,
     },
 });

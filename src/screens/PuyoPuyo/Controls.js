@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { RotateCw, ArrowLeft, ArrowDown, ArrowRight, ArrowBigDown } from 'lucide-react-native';
 
 const Controls = ({
@@ -13,21 +13,17 @@ const Controls = ({
 
     return (
         <View style={styles.controlsContainer}>
-
             <View style={styles.gamePadRow}>
-                {/* Drop Buttons Left Side */}
                 <View style={styles.actionButtonsContainer}>
                     <TouchableOpacity
                         style={[styles.actionButton, styles.hardDropBtn]}
                         onPress={hardDrop}
-                        activeOpacity={0.7}
+                        activeOpacity={0.5}
                     >
                         <ArrowBigDown size={24} color="#f4f4f5" strokeWidth={2.5} />
-                        <Text style={styles.actionButtonLabel}>HARD DROP</Text>
                     </TouchableOpacity>
                 </View>
 
-                {/* D-PAD Right Side */}
                 <View style={styles.dPad}>
                     <View style={styles.dPadRow}>
                         <View style={styles.dPadSpacer} />
@@ -71,32 +67,9 @@ const Controls = ({
 
 const styles = StyleSheet.create({
     controlsContainer: {
-        width: '94%',
+        width: '95%',
         alignItems: 'center',
-        paddingBottom: 5,
-        marginTop: 10,
-    },
-    gameActionsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginBottom: 15,
-    },
-    gameActionButton: {
-        backgroundColor: '#18181b',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 12,
-        flex: 0.48,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#27272a',
-    },
-    gameActionButtonText: {
-        color: '#f4f4f5',
-        fontWeight: '800',
-        fontSize: 12,
-        letterSpacing: 1.5,
+        paddingVertical: '1%',
     },
     gamePadRow: {
         flexDirection: 'row',
@@ -105,69 +78,58 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dPad: {
-        width: 180,
+        width: '50%',
         alignItems: 'center',
     },
     dPadRow: {
         flexDirection: 'row',
     },
     dPadSpacer: {
-        width: 56,
-        height: 56,
+        width: '30%',
+        aspectRatio: 1,
     },
     dPadButton: {
-        width: 56,
-        height: 56,
+        width: '30%',
+        aspectRatio: 1,
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 28,
+        borderRadius: '10%',
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 2,
+        margin: '2%',
         elevation: 3,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: '2%' },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    dPadArrow: {
-        fontSize: 18,
+        shadowRadius: '3%',
     },
     actionButtonsContainer: {
         flex: 1,
         alignItems: 'flex-start',
-        paddingLeft: 10,
+        paddingLeft: '2.5%',
+        height: '60%',
     },
     actionButton: {
         backgroundColor: '#18181b',
         borderWidth: 1,
         borderColor: '#27272a',
-        borderRadius: 16,
-        paddingVertical: 14,
-        paddingHorizontal: 20,
+        borderRadius: '10%',
+        paddingVertical: '4%',
+        paddingHorizontal: '10%',
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 3,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: '2%' },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: '3%',
     },
     hardDropBtn: {
         borderColor: '#3b82f644',
         borderWidth: 1.5,
-        width: 110,
-    },
-    actionButtonText: {
-        fontSize: 24,
-    },
-    actionButtonLabel: {
-        fontSize: 8,
-        fontWeight: '800',
-        color: '#71717a',
-        marginTop: 4,
-        letterSpacing: 0.5,
+        width: '50%',
+        flex: 1,
     },
 });
 

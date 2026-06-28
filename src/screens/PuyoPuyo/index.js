@@ -13,7 +13,7 @@ import {
     findGroupsAndRemove,
     isGameOver,
 } from './gameLogic';
-import StatsRow from './StatsRow';
+import StatsPanel from './StatsPanel';
 import GameBoard from './GameBoard';
 import Controls from './Controls';
 
@@ -230,26 +230,24 @@ const PuyoPuyo = () => {
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#09090b" />
             <Header title="Puyo Puyo" pause={{ isPaused, setIsPaused }} />
-            <View style={styles.container}>
-                <StatsRow score={score} level={level} chains={totalChains} nextPair={nextPairColors} />
+            <View style={styles.gameArea}>
                 <GameBoard
                     displayGrid={displayGrid}
-                    currentPair={currentPair}
                     isPaused={isPaused}
                     gameOver={gameOver}
                     score={score}
-                    chainPop={chainPop}
                     togglePause={() => setIsPaused(!isPaused)}
                     resetGame={resetGame}
                 />
-                <Controls
-                    rotate={rotate}
-                    moveLeft={moveLeft}
-                    moveDown={tryMoveDown}
-                    moveRight={moveRight}
-                    hardDrop={hardDrop}
-                />
+                <StatsPanel score={score} level={level} chains={totalChains} nextPair={nextPairColors} />
             </View>
+            <Controls
+                rotate={rotate}
+                moveLeft={moveLeft}
+                moveDown={tryMoveDown}
+                moveRight={moveRight}
+                hardDrop={hardDrop}
+            />
         </SafeAreaView>
     );
 };
@@ -259,11 +257,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#09090b',
     },
-    container: {
+    gameArea: {
         flex: 1,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: 10,
+        justifyContent: 'center',
+        paddingHorizontal: '2%',
+        paddingVertical: '1%',
         backgroundColor: '#09090b',
     },
 });
