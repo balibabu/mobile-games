@@ -1,8 +1,10 @@
-use percentange throu
+use percentange throughout the design to make them consistent in different sizes display
 
 
 # Tetris
- i like the current design but it changes according to display sizes, i would like you to use percentage instead of fixed sizes so that it remains consistent. keep the design and logic same as it is.
+- move stats on right side and game board on left side and keep the controls at bottom.
+- use percentange throughout the design to make them consistent in different sizes display
+- you can remove the dead codes [codes which no longer are of use]
  note: no need to verify with eslint, do not touch any other games' code.
  
  
