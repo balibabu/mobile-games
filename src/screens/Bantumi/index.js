@@ -22,6 +22,7 @@ import {
     getValidMoves,
     isPlayerPit,
 } from './gameLogic';
+import Header from '../../components/Header';
 
 function computeSowSteps(pits, pitIndex) {
     const steps = [];
@@ -413,14 +414,7 @@ export default function Bantumi() {
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-            <StatusBar barStyle="light-content" backgroundColor="#09090b" />
-            <View style={styles.headerRow}>
-                <TouchableOpacity style={styles.backBtn} onPress={() => navigate('Home')}>
-                    <ChevronLeft size={22} color="#f4f4f5" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Bantumi</Text>
-                <View style={styles.backBtn} />
-            </View>
+            <Header title="Bantumi" />
 
             <View style={styles.boardWrap}>
                 <View
