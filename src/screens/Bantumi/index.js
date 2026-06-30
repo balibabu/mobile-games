@@ -26,7 +26,7 @@ export default function Bantumi() {
     } = useBantumiGame();
 
     const boardWidth = Math.min(width - 32, LAYOUT.maxBoardWidth);
-    const pitSize = (boardWidth - LAYOUT.boardPaddingH) / 6;
+    const pitSize = (boardWidth - 2 * LAYOUT.storeW - LAYOUT.boardPaddingH) / 6;
     const storeW = LAYOUT.storeW;
     const storeH = pitSize * 2 + LAYOUT.pitRowsGap;
     const isDisabled = animating || gameOver;
