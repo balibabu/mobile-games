@@ -1,0 +1,175 @@
+import { StyleSheet } from 'react-native';
+import { COLORS } from './constants';
+
+export default StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: COLORS.background,
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingTop: 8,
+    },
+    topControls: {
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    modeContainer: {
+        flexDirection: 'row',
+        borderRadius: 12,
+        overflow: 'hidden',
+        borderWidth: 1.5,
+        borderColor: COLORS.border,
+    },
+    modeButton: {
+        paddingHorizontal: 24,
+        paddingVertical: 10,
+        backgroundColor: COLORS.surface,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modeButtonActive: {
+        backgroundColor: COLORS.border,
+    },
+    boardWrap: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    board: {
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: COLORS.surface,
+        padding: 8,
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    pitsColumn: {
+        flexDirection: 'column',
+    },
+    pitsRow: {
+        flexDirection: 'row',
+    },
+    cell: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 0.5,
+        borderColor: COLORS.border,
+    },
+    cellNumber: {
+        fontWeight: '900',
+    },
+    store: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        borderRadius: 4,
+    },
+    storeLabel: {
+        fontSize: 9,
+        fontWeight: '800',
+        color: COLORS.muted,
+        letterSpacing: 1,
+        marginBottom: 2,
+    },
+    storeValue: {
+        fontSize: 18,
+        fontWeight: '900',
+    },
+    turnBadge: {
+        alignSelf: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+        borderRadius: 16,
+        borderWidth: 1,
+        backgroundColor: COLORS.surface,
+        marginBottom: 16,
+    },
+    turnText: {
+        fontSize: 14,
+        fontWeight: '800',
+        letterSpacing: 0.5,
+    },
+    overlayBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(9,9,11,0.9)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    overlayCard: {
+        backgroundColor: COLORS.surface,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        paddingVertical: 32,
+        paddingHorizontal: 36,
+        alignItems: 'center',
+        width: '80%',
+        maxWidth: 340,
+    },
+    overlayAccent: {
+        width: 48,
+        height: 4,
+        borderRadius: 2,
+        marginBottom: 20,
+    },
+    overlayTitle: {
+        fontSize: 32,
+        fontWeight: '900',
+        letterSpacing: 1,
+        marginBottom: 24,
+    },
+    scoresRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 28,
+        width: '100%',
+    },
+    scoreBox: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    scoreLabel: {
+        fontSize: 12,
+        fontWeight: '800',
+        color: COLORS.muted,
+        letterSpacing: 1.5,
+        marginBottom: 6,
+    },
+    scoreValue: {
+        fontSize: 28,
+        fontWeight: '900',
+    },
+    scoreDivider: {
+        width: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    scoreVs: {
+        fontSize: 14,
+        fontWeight: '800',
+        color: COLORS.subtle,
+        letterSpacing: 1,
+    },
+    playAgainButton: {
+        borderWidth: 1.5,
+        borderRadius: 12,
+        paddingHorizontal: 40,
+        paddingVertical: 14,
+        width: '100%',
+        alignItems: 'center',
+    },
+    playAgainText: {
+        fontSize: 15,
+        fontWeight: '800',
+        letterSpacing: 2,
+    },
+});
