@@ -5,12 +5,10 @@ import {
     StyleSheet,
     TouchableOpacity,
     useWindowDimensions,
-    StatusBar,
     Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
-import { useNavigation } from '../../contexts/NavigationContext';
+import { Users, Cpu } from 'lucide-react-native';
 import {
     PITS_COUNT,
     getInitialState,
@@ -21,6 +19,7 @@ import {
     findBestMove,
     getValidMoves,
     isPlayerPit,
+    isBotPit,
 } from './gameLogic';
 import Header from '../../components/Header';
 
@@ -146,13 +145,14 @@ function Store({ gems, label, width, height, isPlayer, highlight }) {
     );
 }
 
-function GameBoard({ pits, pitSize, storeW, storeH, onPitPress, disabled, highlightPit }) {
+function GameBoard({ pits, pitSize, storeW, storeH, onPitPress, disabled, highlightPit, humanMode }) {
+    const topDisabled = disabled || !humanMode;
     return (
         <View style={styles.board}>
             <View style={styles.row}>
                 <Store
                     gems={pits[13]}
-                    label="Bot"
+                    label={humanMode ? 'P2' : 'Bot'}
                     width={storeW}
                     height={storeH}
                     isPlayer={false}
@@ -167,7 +167,7 @@ function GameBoard({ pits, pitSize, storeW, storeH, onPitPress, disabled, highli
                                 gems={pits[i]}
                                 pitSize={pitSize}
                                 isPlayer={false}
-                                disabled={disabled}
+                                disabled={topDisabled}
                                 onPress={onPitPress}
                                 highlight={highlightPit === i}
                             />
@@ -190,7 +190,7 @@ function GameBoard({ pits, pitSize, storeW, storeH, onPitPress, disabled, highli
                 </View>
                 <Store
                     gems={pits[6]}
-                    label="You"
+                    label={humanMode ? 'P1' : 'You'}
                     width={storeW}
                     height={storeH}
                     isPlayer={true}
@@ -201,7 +201,7 @@ function GameBoard({ pits, pitSize, storeW, storeH, onPitPress, disabled, highli
     );
 }
 
-function GameOverOverlay({ winner, playerScore, botScore, onPlayAgain }) {
+function GameOverOverlay({ winner, playerScore, botScore, onPlayAgain, gameMode }) {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(30)).current;
 
@@ -224,6 +224,18 @@ function GameOverOverlay({ winner, playerScore, botScore, onPlayAgain }) {
     const isBotWin = winner === 'Bot';
     const accentColor = isPlayerWin ? '#4ade80' : isBotWin ? '#f87171' : '#facc15';
 
+    const playerLabel = gameMode === 'human' ? 'P1' : 'You';
+    const botLabel = gameMode === 'human' ? 'P2' : 'Bot';
+
+    let titleText;
+    if (winner === 'Draw') {
+        titleText = 'Draw!';
+    } else if (gameMode === 'human') {
+        titleText = isPlayerWin ? 'P1 Wins!' : 'P2 Wins!';
+    } else {
+        titleText = isPlayerWin ? 'You Win!' : 'Bot Wins!';
+    }
+
     return (
         <View style={styles.overlayBackground}>
             <Animated.View
@@ -237,19 +249,19 @@ function GameOverOverlay({ winner, playerScore, botScore, onPlayAgain }) {
             >
                 <View style={[styles.overlayAccent, { backgroundColor: accentColor }]} />
                 <Text style={[styles.overlayTitle, { color: accentColor }]}>
-                    {isPlayerWin ? 'You Win!' : isBotWin ? 'Bot Wins!' : 'Draw!'}
+                    {titleText}
                 </Text>
 
                 <View style={styles.scoresRow}>
                     <View style={styles.scoreBox}>
-                        <Text style={styles.scoreLabel}>You</Text>
+                        <Text style={styles.scoreLabel}>{playerLabel}</Text>
                         <Text style={[styles.scoreValue, { color: '#4ade80' }]}>{playerScore}</Text>
                     </View>
                     <View style={styles.scoreDivider}>
                         <Text style={styles.scoreVs}>vs</Text>
                     </View>
                     <View style={styles.scoreBox}>
-                        <Text style={styles.scoreLabel}>Bot</Text>
+                        <Text style={styles.scoreLabel}>{botLabel}</Text>
                         <Text style={[styles.scoreValue, { color: '#f87171' }]}>{botScore}</Text>
                     </View>
                 </View>
@@ -263,7 +275,6 @@ function GameOverOverlay({ winner, playerScore, botScore, onPlayAgain }) {
 }
 
 export default function Bantumi() {
-    const { navigate } = useNavigation();
     const { width } = useWindowDimensions();
     const [pits, setPits] = useState(getInitialState());
     const [isBotTurn, setIsBotTurn] = useState(false);
@@ -271,7 +282,11 @@ export default function Bantumi() {
     const [winner, setWinner] = useState(null);
     const [animating, setAnimating] = useState(false);
     const [highlightPit, setHighlightPit] = useState(-1);
+    const [gameMode, setGameMode] = useState('bot');
+    const [lastLoser, setLastLoser] = useState(null);
     const timeoutsRef = useRef([]);
+
+    const humanMode = gameMode === 'human';
 
     const clearTimeouts = useCallback(() => {
         timeoutsRef.current.forEach(clearTimeout);
@@ -279,6 +294,22 @@ export default function Bantumi() {
     }, []);
 
     const resetGame = useCallback(() => {
+        clearTimeouts();
+        setPits(getInitialState());
+        setGameOver(false);
+        setWinner(null);
+        setAnimating(false);
+        setHighlightPit(-1);
+        if (lastLoser === 'Bot') {
+            setIsBotTurn(true);
+        } else {
+            setIsBotTurn(false);
+        }
+    }, [clearTimeouts, lastLoser]);
+
+    const toggleGameMode = useCallback((mode) => {
+        setGameMode(mode);
+        setLastLoser(null);
         clearTimeouts();
         setPits(getInitialState());
         setIsBotTurn(false);
@@ -307,12 +338,10 @@ export default function Bantumi() {
             setHighlightPit(-1);
             setPits(newPits);
 
-            // 2. Check for game over and animate the sweep
             if (isGameOver(newPits)) {
                 const finalSteps = [];
                 const finalWorking = [...newPits];
 
-                // Sweep Player side
                 for (let i = 0; i < 6; i++) {
                     if (finalWorking[i] > 0) {
                         finalWorking[6] += finalWorking[i];
@@ -320,8 +349,7 @@ export default function Bantumi() {
                         finalSteps.push({ pits: [...finalWorking], highlight: i });
                     }
                 }
-                
-                // Sweep Bot side
+
                 for (let i = 7; i < 13; i++) {
                     if (finalWorking[i] > 0) {
                         finalWorking[13] += finalWorking[i];
@@ -330,32 +358,31 @@ export default function Bantumi() {
                     }
                 }
 
+                const finishGame = () => {
+                    setHighlightPit(-1);
+                    const resolved = finalizeGame(newPits);
+                    setPits(resolved);
+                    setGameOver(true);
+                    const result = getWinner(resolved);
+                    setWinner(result);
+                    setAnimating(false);
+                    setLastLoser(result === 'Player' ? 'Bot' : result === 'Bot' ? 'Player' : null);
+                };
+
                 if (finalSteps.length > 0) {
                     finalSteps.forEach((step, idx) => {
                         const sweepTimer = setTimeout(() => {
                             setPits(step.pits);
                             setHighlightPit(step.highlight);
-                        }, idx * 300); // Slightly faster animation for the final sweep
+                        }, idx * 300);
                         timeoutsRef.current.push(sweepTimer);
                     });
 
                     const finalSweepDelay = finalSteps.length * 300 + 500;
-                    
-                    const finalGameTimer = setTimeout(() => {
-                        setHighlightPit(-1);
-                        const finalPits = finalizeGame(newPits); 
-                        setPits(finalPits);
-                        setGameOver(true);
-                        setWinner(getWinner(finalPits));
-                        setAnimating(false);
-                    }, finalSweepDelay);
+                    const finalGameTimer = setTimeout(finishGame, finalSweepDelay);
                     timeoutsRef.current.push(finalGameTimer);
                 } else {
-                    const finalPits = finalizeGame(newPits);
-                    setPits(finalPits);
-                    setGameOver(true);
-                    setWinner(getWinner(finalPits));
-                    setAnimating(false);
+                    finishGame();
                 }
                 return;
             }
@@ -374,14 +401,23 @@ export default function Bantumi() {
         timeoutsRef.current.push(afterT);
     }, [clearTimeouts]);
 
-    const handlePlayerMove = useCallback(
+    const handlePitPress = useCallback(
         (pitIndex) => {
-            if (isBotTurn || gameOver || animating) return;
-            if (!isPlayerPit(pitIndex)) return;
+            if (gameOver || animating) return;
+            if (humanMode) {
+                if (isBotTurn) {
+                    if (!isBotPit(pitIndex)) return;
+                } else {
+                    if (!isPlayerPit(pitIndex)) return;
+                }
+            } else {
+                if (isBotTurn) return;
+                if (!isPlayerPit(pitIndex)) return;
+            }
             if (pits[pitIndex] === 0) return;
-            executeAnimatedMove([...pits], pitIndex, false);
+            executeAnimatedMove([...pits], pitIndex, isBotTurn);
         },
-        [isBotTurn, gameOver, animating, pits, executeAnimatedMove],
+        [isBotTurn, gameOver, animating, pits, executeAnimatedMove, humanMode],
     );
 
     const handleBotMove = useCallback(
@@ -394,13 +430,13 @@ export default function Bantumi() {
     );
 
     useEffect(() => {
-        if (isBotTurn && !gameOver && !animating) {
+        if (!humanMode && isBotTurn && !gameOver && !animating) {
             const timer = setTimeout(() => {
                 handleBotMove(pits);
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, [isBotTurn, gameOver, animating, pits, handleBotMove]);
+    }, [isBotTurn, gameOver, animating, pits, handleBotMove, humanMode]);
 
     useEffect(() => {
         return () => clearTimeouts();
@@ -410,18 +446,55 @@ export default function Bantumi() {
     const pitSize = (boardWidth - 40) / 6;
     const storeW = 44;
     const storeH = pitSize * 2 + 20;
-    const isDisabled = isBotTurn || gameOver || animating;
+    const isDisabled = animating || gameOver;
+
+    const turnLabel = animating
+        ? 'Moving...'
+        : humanMode
+            ? (isBotTurn ? "P2's Turn" : "P1's Turn")
+            : (isBotTurn ? "Bot's Turn" : 'Your Turn');
+
+    const turnColor = animating
+        ? '#facc15'
+        : isBotTurn
+            ? '#f87171'
+            : '#4ade80';
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
             <Header title="Bantumi" />
 
+            <View style={styles.topControls}>
+                <View style={styles.modeContainer}>
+                    <TouchableOpacity
+                        style={[styles.modeButton, gameMode === 'human' && styles.modeButtonActive]}
+                        onPress={() => toggleGameMode('human')}
+                        activeOpacity={0.7}
+                    >
+                        <Users
+                            size={20}
+                            color={gameMode === 'human' ? '#f4f4f5' : '#71717a'}
+                            strokeWidth={2.5}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.modeButton, gameMode === 'bot' && styles.modeButtonActive]}
+                        onPress={() => toggleGameMode('bot')}
+                        activeOpacity={0.7}
+                    >
+                        <Cpu
+                            size={20}
+                            color={gameMode === 'bot' ? '#f4f4f5' : '#71717a'}
+                            strokeWidth={2.5}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
             <View style={styles.boardWrap}>
-                <View
-                    style={[styles.turnBadge, { borderColor: animating ? '#facc15' : isBotTurn ? '#f87171' : '#4ade80', },]}>
-                    <Text
-                        style={[styles.turnText, { color: animating ? '#facc15' : isBotTurn ? '#f87171' : '#4ade80', },]}>
-                        {animating ? 'Moving...' : isBotTurn ? "Bot's Turn" : 'Your Turn'}
+                <View style={[styles.turnBadge, { borderColor: turnColor }]}>
+                    <Text style={[styles.turnText, { color: turnColor }]}>
+                        {turnLabel}
                     </Text>
                 </View>
                 <GameBoard
@@ -429,9 +502,10 @@ export default function Bantumi() {
                     pitSize={pitSize}
                     storeW={storeW}
                     storeH={storeH}
-                    onPitPress={handlePlayerMove}
+                    onPitPress={handlePitPress}
                     disabled={isDisabled}
                     highlightPit={highlightPit}
+                    humanMode={humanMode}
                 />
             </View>
 
@@ -441,6 +515,7 @@ export default function Bantumi() {
                     playerScore={pits[6]}
                     botScore={pits[13]}
                     onPlayAgain={resetGame}
+                    gameMode={gameMode}
                 />
             )}
         </SafeAreaView>
@@ -455,58 +530,26 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingTop: 8,
     },
-    headerRow: {
-        flexDirection: 'row',
+    topControls: {
         alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
         marginBottom: 12,
     },
-    backBtn: {
-        width: 40,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        backgroundColor: '#18181b',
-        borderWidth: 1,
-        borderColor: '#27272a',
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: '900',
-        color: '#f4f4f5',
-        letterSpacing: 0.5,
-    },
-    statsRow: {
+    modeContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        paddingVertical: 12,
-        marginBottom: 8,
-    },
-    statBox: {
-        alignItems: 'center',
-        backgroundColor: '#18181b',
         borderRadius: 12,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderWidth: 1,
+        overflow: 'hidden',
+        borderWidth: 1.5,
         borderColor: '#27272a',
-        minWidth: 100,
     },
-    statLabel: {
-        fontSize: 10,
-        fontWeight: '800',
-        color: '#71717a',
-        letterSpacing: 1.5,
-        marginTop: 4,
-        marginBottom: 2,
+    modeButton: {
+        paddingHorizontal: 24,
+        paddingVertical: 10,
+        backgroundColor: '#18181b',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    statValue: {
-        fontSize: 18,
-        fontWeight: '900',
-        color: '#f4f4f5',
+    modeButtonActive: {
+        backgroundColor: '#27272a',
     },
     boardWrap: {
         flexGrow: 1,
@@ -557,6 +600,20 @@ const styles = StyleSheet.create({
     storeValue: {
         fontSize: 18,
         fontWeight: '900',
+    },
+    turnBadge: {
+        alignSelf: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+        borderRadius: 16,
+        borderWidth: 1,
+        backgroundColor: '#18181b',
+        marginBottom: 16,
+    },
+    turnText: {
+        fontSize: 14,
+        fontWeight: '800',
+        letterSpacing: 0.5,
     },
     overlayBackground: {
         position: 'absolute',
@@ -635,20 +692,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '800',
         letterSpacing: 2,
-    },
-    turnBadge: {
-        alignSelf: 'center',
-        paddingHorizontal: 14,
-        paddingVertical: 6,
-        borderRadius: 16,
-        borderWidth: 1,
-        backgroundColor: '#18181b',
-        marginBottom: 16,
-    },
-
-    turnText: {
-        fontSize: 14,
-        fontWeight: '800',
-        letterSpacing: 0.5,
     },
 });
