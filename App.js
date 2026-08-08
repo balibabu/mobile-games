@@ -11,6 +11,8 @@ import PuyoPuyo from './src/screens/PuyoPuyo';
 import Bantumi from './src/screens/Bantumi';
 import Game2048 from './src/screens/Game2048';
 import Snake from './src/screens/Snake';
+import Sudoku from './src/screens/Sudoku';
+import SlidePuzzle from './src/screens/SlidePuzzle';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -36,6 +38,10 @@ const AppContent = () => {
             return <Game2048 />;
         case 'Snake':
             return <Snake />;
+        case 'Sudoku':
+            return <Sudoku />;
+        case 'SlidePuzzle':
+            return <SlidePuzzle />;
         default:
             return <Home />;
     }
