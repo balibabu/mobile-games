@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flag, Bomb, Clock } from 'lucide-react-native';
 import Header from '../../components/Header';

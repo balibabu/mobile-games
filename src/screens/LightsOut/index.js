@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { RotateCcw, Zap, Trophy, TrendingUp, Clock } from 'lucide-react-native';
+import { Zap, Trophy, TrendingUp, Clock } from 'lucide-react-native';
 import Header from '../../components/Header'; // Adjust this path to match your folder structure
 import { createBoard, toggleCell, isSolved, calculateTimeLimit } from './gameLogic';
 

@@ -5,7 +5,7 @@ import { Volume2, VolumeX, RotateCcw } from 'lucide-react-native';
 import Sound from 'react-native-sound';
 import Header from '../../components/Header';
 import ColorPads from './ColorPads';
-import { extendSequence, COLOR_MAP, COLORS } from './gameLogic';
+import { extendSequence } from './gameLogic';
 
 const soundFiles = {
     red: new Sound('red.mp3', Sound.MAIN_BUNDLE, (e) => { if (e) console.log('red sound error', e); }),

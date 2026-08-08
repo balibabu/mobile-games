@@ -9,6 +9,7 @@ import Minesweeper from './src/screens/Minesweeper';
 import LightsOut from './src/screens/LightsOut';
 import PuyoPuyo from './src/screens/PuyoPuyo';
 import Bantumi from './src/screens/Bantumi';
+import Game2048 from './src/screens/Game2048';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -30,6 +31,8 @@ const AppContent = () => {
             return <PuyoPuyo />;
         case 'Bantumi':
             return <Bantumi />;
+        case 'Game2048':
+            return <Game2048 />;
         default:
             return <Home />;
     }

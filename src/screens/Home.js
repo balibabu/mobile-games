@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Rocket, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Package } from 'lucide-react-native';
+import { Gamepad2, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Package, Grid2x2 } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -9,6 +9,7 @@ export default function Home() {
     const { navigate } = useNavigation();
 
     const gamesList = [
+        { id: 'Game2048', title: '2048', description: 'Swipe to merge tiles. Reach 2048!', Icon: Grid2x2, backgroundColor: '#a855f7' },
         { id: 'Minesweeper', title: 'Minesweeper', description: "Avoid the mines and clear the board!", Icon: Bomb, backgroundColor: '#f59e0b' },
         { id: 'LightsOut', title: 'Lights Out', description: 'Turn off all the lights to advance!', Icon: Sun, backgroundColor: '#3b82f6' },
         { id: 'TicTacToe', title: 'Tic Tac Toe', description: 'Face off against an unbeatable Minimax AI.', Icon: Hash, backgroundColor: '#ef4444' },
