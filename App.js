@@ -10,6 +10,7 @@ import LightsOut from './src/screens/LightsOut';
 import PuyoPuyo from './src/screens/PuyoPuyo';
 import Bantumi from './src/screens/Bantumi';
 import Game2048 from './src/screens/Game2048';
+import Snake from './src/screens/Snake';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -33,6 +34,8 @@ const AppContent = () => {
             return <Bantumi />;
         case 'Game2048':
             return <Game2048 />;
+        case 'Snake':
+            return <Snake />;
         default:
             return <Home />;
     }
