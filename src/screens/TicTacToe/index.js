@@ -3,14 +3,16 @@ import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Users, RotateCcw, Cpu } from 'lucide-react-native';
 import Header from '../../components/Header';
-import Board from './Board';
-import { checkWinner, isBoardFull, getBestMove, getRandomMove } from './minimax';
+import Board, { WIN_LINE_ANIMATION_DURATION } from './Board';
+import { checkWinner, isBoardFull, getBestMove, getRandomMove, getWinningLine } from './minimax';
 
 const TicTacToe = () => {
     const [gameMode, setGameMode] = useState('bot'); // 'bot' or 'human'
     const [board, setBoard] = useState(Array(9).fill(null));
     const [isXTurn, setIsXTurn] = useState(true);
-    const [winner, setWinner] = useState(null);
+    const [winner, setWinner] = useState(null); // the marker that won, or 'Draw'
+    const [winningLine, setWinningLine] = useState(null); // indices of the winning line
+    const [showOverlay, setShowOverlay] = useState(false); // revealed after the line animation
     const [difficulty, setDifficulty] = useState('Medium'); // 'Easy', 'Medium', 'Hard'
 
     const handleCellPress = (index) => {
@@ -28,6 +30,8 @@ const TicTacToe = () => {
         setBoard(Array(9).fill(null));
         setIsXTurn(true);
         setWinner(null);
+        setWinningLine(null);
+        setShowOverlay(false);
     };
 
     const changeDifficulty = (newDiff) => {
@@ -43,12 +47,20 @@ const TicTacToe = () => {
     useEffect(() => {
         const currentWinner = checkWinner(board);
         if (currentWinner) {
+            const line = getWinningLine(board);
             setWinner(currentWinner);
-            return;
+            setWinningLine(line);
+            setShowOverlay(false);
+            // Let the winning line animate across the board before revealing the overlay.
+            const overlayTimer = setTimeout(() => {
+                setShowOverlay(true);
+            }, WIN_LINE_ANIMATION_DURATION);
+            return () => clearTimeout(overlayTimer);
         }
 
         if (isBoardFull(board)) {
             setWinner('Draw');
+            setShowOverlay(true);
             return;
         }
 
@@ -132,9 +144,9 @@ const TicTacToe = () => {
                     )}
                 </View>
 
-                <Board board={board} onCellPress={handleCellPress} />
+                <Board board={board} onCellPress={handleCellPress} winningLine={winningLine} />
 
-                {winner && (
+                {winner && showOverlay && (
                     <View style={styles.overlay}>
                         <View style={styles.overlayContent}>
                             <Text style={[styles.winnerText, winner === 'X' ? styles.xColor : winner === 'Draw' ? styles.drawColor : styles.oColor]}>

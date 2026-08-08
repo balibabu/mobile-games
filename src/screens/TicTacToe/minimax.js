@@ -18,6 +18,20 @@ export const checkWinner = (currentBoard) => {
     return null;
 };
 
+export const getWinningLine = (currentBoard) => {
+    for (const line of winningLines) {
+        const [a, b, c] = line;
+        if (
+            currentBoard[a] &&
+            currentBoard[a] === currentBoard[b] &&
+            currentBoard[a] === currentBoard[c]
+        ) {
+            return line;
+        }
+    }
+    return null;
+};
+
 export const isBoardFull = (currentBoard) => currentBoard.every((cell) => cell !== null);
 
 const minimax = (currentBoard, depth, isMaximizing) => {
