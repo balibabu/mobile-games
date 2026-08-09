@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Gamepad2, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Package, Grid2x2, Worm, Grid3x3, Puzzle } from 'lucide-react-native';
+import { Gamepad2, Hash, LayoutGrid, Lightbulb, Bomb, Sun, CircleDot, Package, Grid2x2, Worm, Grid3x3, Puzzle, Brain, ScanSearch } from 'lucide-react-native';
 import { useNavigation } from '../contexts/NavigationContext';
 import GameCard from '../components/GameCard';
 
@@ -13,6 +13,8 @@ export default function Home() {
         { id: 'Snake', title: 'Snake', description: 'Eat, grow, and don\u2019t bite yourself!', Icon: Worm, backgroundColor: '#22c55e' },
         { id: 'Sudoku', title: 'Sudoku', description: 'Fill the grid. Every row, column & box 1\u20139.', Icon: Grid3x3, backgroundColor: '#3b82f6' },
         { id: 'SlidePuzzle', title: 'Slide Puzzle', description: 'Slide tiles into order 1\u201315.', Icon: Puzzle, backgroundColor: '#06b6d4' },
+        { id: 'MemoryGrid', title: 'Memory Grid', description: 'Memorize the pattern, then tap it back!', Icon: Brain, backgroundColor: '#a855f7' },
+        { id: 'KukuKube', title: 'Kuku Kube', description: 'Spot the odd-colored tile before time runs out!', Icon: ScanSearch, backgroundColor: '#10b981' },
         { id: 'Minesweeper', title: 'Minesweeper', description: "Avoid the mines and clear the board!", Icon: Bomb, backgroundColor: '#f59e0b' },
         { id: 'LightsOut', title: 'Lights Out', description: 'Turn off all the lights to advance!', Icon: Sun, backgroundColor: '#3b82f6' },
         { id: 'TicTacToe', title: 'Tic Tac Toe', description: 'Face off against an unbeatable Minimax AI.', Icon: Hash, backgroundColor: '#ef4444' },

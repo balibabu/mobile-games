@@ -13,6 +13,8 @@ import Game2048 from './src/screens/Game2048';
 import Snake from './src/screens/Snake';
 import Sudoku from './src/screens/Sudoku';
 import SlidePuzzle from './src/screens/SlidePuzzle';
+import MemoryGrid from './src/screens/MemoryGrid';
+import KukuKube from './src/screens/KukuKube';
 
 const AppContent = () => {
     const { currentScreen } = useNavigation();
@@ -42,6 +44,10 @@ const AppContent = () => {
             return <Sudoku />;
         case 'SlidePuzzle':
             return <SlidePuzzle />;
+        case 'MemoryGrid':
+            return <MemoryGrid />;
+        case 'KukuKube':
+            return <KukuKube />;
         default:
             return <Home />;
     }
